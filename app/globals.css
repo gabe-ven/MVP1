@@ -140,3 +140,31 @@ body {
   animation: glow 2s ease-in-out infinite;
 }
 
+/* Truck slide animations */
+@keyframes slide {
+  0% {
+    transform: translateX(-100px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 100px));
+  }
+}
+
+@keyframes slideReverse {
+  0% {
+    transform: translateX(calc(100vw + 100px));
+  }
+  100% {
+    transform: translateX(-100px);
+  }
+}
+
+@keyframes scan {
+  0% {
+    background-position: 0 -200px;
+  }
+  100% {
+    background-position: 0 calc(100% + 200px);
+  }
+}
+

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useSession, signIn } from "next-auth/react";
 import LoadTable from "@/components/LoadTable";
 import Metrics from "@/components/Metrics";
 import Charts from "@/components/Charts";
@@ -9,12 +10,34 @@ import GmailAuthButton from "@/components/GmailAuthButton";
 import GmailStatus from "@/components/GmailStatus";
 import Features from "@/components/Features";
 import FAQs from "@/components/FAQs";
+import AnimatedTrucks from "@/components/AnimatedTrucks";
 import { LoadData } from "@/lib/schema";
 import { TruckIcon } from "lucide-react";
 
 export default function Home() {
+  const { data: session } = useSession();
   const [loads, setLoads] = useState<LoadData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+
+  // Restore from sessionStorage after hydration (client-side only)
+  useEffect(() => {
+    const cached = sessionStorage.getItem('cachedLoads');
+    const hasLoaded = sessionStorage.getItem('hasLoadedOnce') === 'true';
+    
+    if (cached) {
+      try {
+        setLoads(JSON.parse(cached));
+        setIsLoading(false);
+      } catch (e) {
+        console.error('Failed to restore cached loads:', e);
+      }
+    }
+    
+    if (hasLoaded) {
+      setHasLoadedOnce(true);
+    }
+  }, []);
 
   const fetchLoads = useCallback(async (showLoading = true) => {
     if (showLoading) {
@@ -31,10 +54,15 @@ export default function Home() {
         
         // Only update if data has actually changed
         if (newLoadsJson !== prevLoadsJson) {
-          return data.loads || [];
+          const newLoads = data.loads || [];
+          // Cache loads in sessionStorage
+          sessionStorage.setItem('cachedLoads', JSON.stringify(newLoads));
+          return newLoads;
         }
         return prevLoads;
       });
+      setHasLoadedOnce(true);
+      sessionStorage.setItem('hasLoadedOnce', 'true');
     } catch (error) {
       console.error("Error fetching loads:", error);
     } finally {
@@ -152,6 +180,7 @@ export default function Home() {
       <header className="border-b border-gray-800/30 sticky top-0 z-40 backdrop-blur-xl bg-[#0a0a0f]/90">
         <div className="custom-screen py-4">
           <div className="flex items-center justify-between gap-4">
+            {/* Logo - Left */}
             <div className="flex items-center space-x-3">
               <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-2.5 rounded-xl shadow-lg shadow-orange-500/50">
                 <TruckIcon className="w-6 h-6 text-white" />
@@ -165,29 +194,126 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
+            {/* Navigation Links - Center */}
+            <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
+              <a
+                href="#features"
+                className="text-sm text-gray-300 hover:text-orange-400 transition-colors"
+              >
+                Features
+              </a>
+              <a
+                href="#faq"
+                className="text-sm text-gray-300 hover:text-orange-400 transition-colors"
+              >
+                FAQ
+              </a>
+            </nav>
             
-            {/* Gmail Status */}
-            <GmailStatus onSyncComplete={fetchLoads} />
+            {/* Right Side - Gmail Status or Sign In */}
+            <div className="flex items-center gap-3">
+              {session ? (
+                <GmailStatus onSyncComplete={fetchLoads} />
+              ) : (
+                <button
+                  onClick={() => signIn("google")}
+                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all"
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <div className="relative">
+        {/* Loading State */}
+        {isLoading && !hasLoadedOnce && (
+          <div className="custom-screen py-40 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          </div>
+        )}
+
         {/* Hero Section */}
-        {loads.length === 0 && (
-          <section className="relative overflow-hidden">
+        {!isLoading && loads.length === 0 && (
+          <section className="relative overflow-hidden min-h-screen">
             {/* Background Pattern */}
-            <div className="absolute inset-0 -z-10">
-              {/* Grid Pattern */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#1a1a1f_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+            <div className="absolute inset-0 overflow-hidden">
+              {/* Base gradient - smooth */}
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-800/30 via-slate-800/10 to-transparent" />
               
-              {/* Gradient Orbs */}
-              <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
-              <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
+              {/* Sophisticated grid with perspective - Subtle with smooth FADE */}
+              <div 
+                className="absolute inset-0 h-[150vh] opacity-30"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(to right, rgba(148, 163, 184, 0.6) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(148, 163, 184, 0.6) 1px, transparent 1px)
+                  `,
+                  backgroundSize: '80px 80px',
+                  transform: 'perspective(1000px) rotateX(60deg) scale(2)',
+                  transformOrigin: 'center top',
+                  maskImage: 'linear-gradient(180deg, black 0%, black 3%, rgba(0,0,0,0.98) 10%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.82) 35%, rgba(0,0,0,0.68) 50%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0.32) 78%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 3%, rgba(0,0,0,0.98) 10%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.82) 35%, rgba(0,0,0,0.68) 50%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0.32) 78%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+                }}
+              />
+              
+              {/* Dot pattern overlay - Subtle with smooth FADE */}
+              <div 
+                className="absolute inset-0 h-[150vh] opacity-25"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, rgba(251, 146, 60, 0.5) 1.5px, transparent 1.5px)',
+                  backgroundSize: '60px 60px',
+                  maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.95) 12%, rgba(0,0,0,0.88) 22%, rgba(0,0,0,0.78) 35%, rgba(0,0,0,0.64) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.07) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.95) 12%, rgba(0,0,0,0.88) 22%, rgba(0,0,0,0.78) 35%, rgba(0,0,0,0.64) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.07) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+                }}
+              />
+              
+              {/* Diagonal accent lines - Subtle with smooth FADE */}
+              <div className="absolute top-0 left-0 w-full h-full opacity-40">
+                <div className="absolute top-1/4 -left-1/4 w-3/4 h-0.5 rotate-45 transform origin-left" style={{
+                  background: 'linear-gradient(to right, transparent 0%, rgba(249, 115, 22, 0.6) 20%, rgba(249, 115, 22, 0.6) 40%, rgba(249, 115, 22, 0.4) 60%, rgba(249, 115, 22, 0.2) 80%, transparent 100%)',
+                  boxShadow: '0 0 20px rgba(249, 115, 22, 0.3)',
+                }} />
+                <div className="absolute top-1/3 right-0 w-2/3 h-0.5 -rotate-45 transform origin-right" style={{
+                  background: 'linear-gradient(to left, transparent 0%, rgba(251, 191, 36, 0.6) 20%, rgba(251, 191, 36, 0.6) 40%, rgba(251, 191, 36, 0.4) 60%, rgba(251, 191, 36, 0.2) 80%, transparent 100%)',
+                  boxShadow: '0 0 20px rgba(251, 191, 36, 0.3)',
+                }} />
+                <div className="absolute top-1/2 left-1/4 w-1/2 h-0.5 rotate-45 transform" style={{
+                  background: 'linear-gradient(to right, transparent 0%, rgba(251, 146, 60, 0.5) 20%, rgba(251, 146, 60, 0.5) 40%, rgba(251, 146, 60, 0.3) 65%, rgba(251, 146, 60, 0.15) 85%, transparent 100%)',
+                  boxShadow: '0 0 15px rgba(251, 146, 60, 0.2)',
+                }} />
+              </div>
+              
+              {/* Animated gradient mesh - Subtle with smooth FADE */}
+              <div className="absolute inset-0 h-[150vh]" style={{
+                maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.97) 12%, rgba(0,0,0,0.9) 22%, rgba(0,0,0,0.8) 35%, rgba(0,0,0,0.66) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.06) 95%, rgba(0,0,0,0.015) 98%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.97) 12%, rgba(0,0,0,0.9) 22%, rgba(0,0,0,0.8) 35%, rgba(0,0,0,0.66) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.06) 95%, rgba(0,0,0,0.015) 98%, transparent 100%)',
+              }}>
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+                <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
+                <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-orange-600/15 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '2s' }} />
+              </div>
+              
+              {/* Scan line effect - Subtle with smooth FADE */}
+              <div className="absolute inset-0 h-[150vh] opacity-10" style={{
+                maskImage: 'linear-gradient(180deg, black 0%, black 4%, rgba(0,0,0,0.93) 15%, rgba(0,0,0,0.84) 28%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.34) 77%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 4%, rgba(0,0,0,0.93) 15%, rgba(0,0,0,0.84) 28%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.34) 77%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+              }}>
+                <div className="h-full w-full animate-[scan_8s_linear_infinite]" style={{
+                  background: 'linear-gradient(to bottom, transparent 0%, rgba(251, 146, 60, 0.4) 50%, transparent 100%)',
+                  backgroundSize: '100% 200px',
+                }} />
+              </div>
             </div>
 
-            <div className="custom-screen py-28">
+            {/* Animated Trucks */}
+            <AnimatedTrucks />
+
+            <div className="custom-screen py-28 relative z-10">
               <div className="space-y-5 max-w-3xl mx-auto text-center">
                 <h1 
                   className="text-4xl bg-clip-text text-transparent bg-gradient-to-r font-extrabold mx-auto sm:text-6xl"
@@ -226,12 +352,12 @@ export default function Home() {
         )}
 
         {/* Features Section */}
-        {loads.length === 0 && (
+        {!isLoading && loads.length === 0 && (
           <Features />
         )}
 
         {/* FAQs Section - Only on landing page */}
-        {loads.length === 0 && (
+        {!isLoading && loads.length === 0 && (
           <FAQs />
         )}
 

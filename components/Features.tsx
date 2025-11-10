@@ -38,7 +38,7 @@ const Features = () => {
   ];
 
   return (
-    <section className="custom-screen text-gray-300 py-20">
+    <section id="features" className="custom-screen text-gray-300 py-20">
       <LayoutEffect
         className="duration-1000 delay-300"
         isInviewState={{

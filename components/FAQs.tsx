@@ -30,7 +30,7 @@ const faqsList = [
 ];
 
 const FAQs = () => (
-  <section className="custom-screen text-gray-300 py-20">
+  <section id="faq" className="custom-screen text-gray-300 py-20">
     <div className="max-w-xl text-center xl:mx-auto">
       <h2 className="text-white text-3xl font-extrabold sm:text-4xl">Everything you need to know</h2>
       <p className="mt-3 text-gray-300">Here are the most common questions about Load Insights.</p>
