@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Load Insights - Gmail Scanner",
+  "version": "1.0.0",
+  "description": "Automatically extract rate confirmations from Gmail and send to Load Insights dashboard",
+  "permissions": [
+    "storage",
+    "notifications",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://www.googleapis.com/*",
+    "http://localhost:3000/*",
+    "https://*.vercel.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "oauth2": {
+    "client_id": "27663494213-q6kp6mlaf9q8m6ddicbdfq2t687g664p.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/gmail.readonly"
+    ]
+  }
+}
+

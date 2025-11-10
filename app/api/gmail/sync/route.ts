@@ -1,0 +1,178 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { google } from "googleapis";
+import { extractLoadData } from "@/lib/extract";
+import { addLoads } from "@/lib/storage";
+import pdf from "pdf-parse";
+
+export async function POST(request: NextRequest) {
+  try {
+    // Check if user is authenticated
+    const session = await getServerSession(authOptions);
+    
+    if (!session || !session.accessToken) {
+      return NextResponse.json(
+        { error: "Not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    // Set up Gmail API client
+    const oauth2Client = new google.auth.OAuth2();
+    oauth2Client.setCredentials({ access_token: session.accessToken });
+    
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+
+    // Calculate date 30 days ago
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const afterDate = thirtyDaysAgo.toISOString().split('T')[0].replace(/-/g, '/');
+    
+    // Search queries for rate confirmations
+    const queries = [
+      `has:attachment filename:pdf filename:rate filename:confirmation after:${afterDate}`,
+      `has:attachment filename:pdf filename:load filename:confirmation after:${afterDate}`,
+      `has:attachment filename:pdf filename:carrier filename:rate after:${afterDate}`,
+      `has:attachment filename:pdf filename:freight filename:confirmation after:${afterDate}`,
+      `has:attachment filename:pdf filename:rate filename:sheet after:${afterDate}`,
+      `has:attachment filename:pdf filename:load filename:tender after:${afterDate}`,
+      `has:attachment filename:pdf filename:rate after:${afterDate}`,
+      `has:attachment filename:pdf subject:rate subject:confirmation after:${afterDate}`
+    ];
+
+    const allMessages: any[] = [];
+    
+    // Search Gmail for matching emails
+    for (const query of queries) {
+      let pageToken: string | undefined;
+      
+      do {
+        const response = await gmail.users.messages.list({
+          userId: "me",
+          q: query,
+          maxResults: 500,
+          pageToken,
+        });
+
+        if (response.data.messages) {
+          for (const msg of response.data.messages) {
+            if (!allMessages.find(m => m.id === msg.id)) {
+              allMessages.push(msg);
+            }
+          }
+        }
+        
+        pageToken = response.data.nextPageToken || undefined;
+      } while (pageToken);
+    }
+
+    if (allMessages.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: "No rate confirmation emails found in the last 30 days",
+        stats: {
+          emailsScanned: 0,
+          pdfsFound: 0,
+          extracted: 0,
+          duplicates: 0,
+          failed: 0,
+        },
+      });
+    }
+
+    // Process each email and extract PDFs
+    let pdfsFound = 0;
+    let extracted = 0;
+    let duplicates = 0;
+    let failed = 0;
+    const extractedLoads: any[] = [];
+
+    for (const message of allMessages) {
+      try {
+        // Get full message details
+        const msgData = await gmail.users.messages.get({
+          userId: "me",
+          id: message.id,
+          format: "full",
+        });
+
+        const parts = msgData.data.payload?.parts || [];
+        
+        // Find PDF attachments
+        for (const part of parts) {
+          if (
+            part.filename &&
+            part.filename.toLowerCase().endsWith(".pdf") &&
+            part.body?.attachmentId
+          ) {
+            pdfsFound++;
+
+            try {
+              // Download attachment
+              const attachment = await gmail.users.messages.attachments.get({
+                userId: "me",
+                messageId: message.id,
+                id: part.body.attachmentId,
+              });
+
+              if (attachment.data.data) {
+                // Decode base64 attachment
+                const buffer = Buffer.from(attachment.data.data, "base64");
+                
+                // Extract text from PDF
+                const pdfData = await pdf(buffer);
+                const text = pdfData.text;
+
+                if (!text || text.trim().length === 0) {
+                  failed++;
+                  continue;
+                }
+
+                // Extract load data using AI
+                const loadData = await extractLoadData(text, part.filename);
+                
+                if (loadData) {
+                  extractedLoads.push(loadData);
+                }
+              }
+            } catch (pdfError) {
+              console.error(`Error processing PDF ${part.filename}:`, pdfError);
+              failed++;
+            }
+          }
+        }
+      } catch (msgError) {
+        console.error(`Error processing message ${message.id}:`, msgError);
+      }
+    }
+
+    // Save to storage with user email as identifier
+    if (extractedLoads.length > 0) {
+      const { addedCount, duplicateCount } = await addLoads(extractedLoads, session.user?.email || "unknown");
+      extracted = addedCount;
+      duplicates = duplicateCount;
+      failed = pdfsFound - extracted - duplicates;
+    }
+
+    return NextResponse.json({
+      success: true,
+      stats: {
+        emailsScanned: allMessages.length,
+        pdfsFound,
+        extracted,
+        duplicates,
+        failed,
+      },
+      loads: extractedLoads,
+    });
+
+  } catch (error: any) {
+    console.error("Gmail sync error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to sync Gmail" },
+      { status: 500 }
+    );
+  }
+}
+

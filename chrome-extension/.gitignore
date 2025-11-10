@@ -1,0 +1,21 @@
+# Chrome Extension .gitignore
+
+# Packaged extension
+*.crx
+*.pem
+*.zip
+
+# Icons (if generated)
+# Uncomment if you want to ignore icons and generate them locally
+# icons/*.png
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+
