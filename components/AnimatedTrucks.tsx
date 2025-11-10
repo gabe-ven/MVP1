@@ -13,7 +13,7 @@ export default function AnimatedTrucks() {
           transformOrigin: 'center top',
         }}>
           <svg width="140" height="70" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-orange-500" style={{
-            transform: 'scaleY(0.5)',
+            transform: 'scaleY(0.7)',
           }}>
             <rect x="15" y="22" width="60" height="20" fill="currentColor" opacity="0.9" rx="2"/>
             <rect x="75" y="18" width="35" height="24" fill="currentColor" rx="2"/>
@@ -39,7 +39,7 @@ export default function AnimatedTrucks() {
           transformOrigin: 'center top',
         }}>
           <svg width="130" height="65" viewBox="0 0 130 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-amber-500" style={{
-            transform: 'scaleY(0.5)',
+            transform: 'scaleY(0.7)',
           }}>
             <rect x="40" y="22" width="58" height="20" fill="currentColor" opacity="0.9" rx="2"/>
             <rect x="10" y="18" width="32" height="24" fill="currentColor" rx="2"/>
@@ -65,7 +65,7 @@ export default function AnimatedTrucks() {
           transformOrigin: 'center top',
         }}>
           <svg width="135" height="68" viewBox="0 0 135 68" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-orange-400" style={{
-            transform: 'scaleY(0.5)',
+            transform: 'scaleY(0.7)',
           }}>
             <rect x="14" y="22" width="55" height="19" fill="currentColor" opacity="0.9" rx="2"/>
             <rect x="69" y="18" width="32" height="23" fill="currentColor" rx="2"/>
@@ -91,7 +91,7 @@ export default function AnimatedTrucks() {
           transformOrigin: 'center top',
         }}>
           <svg width="125" height="63" viewBox="0 0 125 63" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-amber-400" style={{
-            transform: 'scaleY(0.5)',
+            transform: 'scaleY(0.7)',
           }}>
             <rect x="38" y="21" width="54" height="19" fill="currentColor" opacity="0.9" rx="2"/>
             <rect x="12" y="17" width="28" height="23" fill="currentColor" rx="2"/>

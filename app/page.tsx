@@ -195,21 +195,23 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Navigation Links - Center */}
-            <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
-              <a
-                href="#features"
-                className="text-sm text-gray-300 hover:text-orange-400 transition-colors"
-              >
-                Features
-              </a>
-              <a
-                href="#faq"
-                className="text-sm text-gray-300 hover:text-orange-400 transition-colors"
-              >
-                FAQ
-              </a>
-            </nav>
+            {/* Navigation Links - Center (only show on hero page) */}
+            {loads.length === 0 && (
+              <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
+                <a
+                  href="#features"
+                  className="text-sm text-gray-300 hover:text-orange-400 transition-colors"
+                >
+                  Features
+                </a>
+                <a
+                  href="#faq"
+                  className="text-sm text-gray-300 hover:text-orange-400 transition-colors"
+                >
+                  FAQ
+                </a>
+              </nav>
+            )}
             
             {/* Right Side - Gmail Status or Sign In */}
             <div className="flex items-center gap-3">
