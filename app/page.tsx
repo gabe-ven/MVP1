@@ -33,22 +33,30 @@ export default function Home() {
 
   // Restore from sessionStorage after hydration (client-side only)
   useEffect(() => {
-    const cached = sessionStorage.getItem('cachedLoads');
-    const hasLoaded = sessionStorage.getItem('hasLoadedOnce') === 'true';
-    
-    if (cached) {
-      try {
-        setLoads(JSON.parse(cached));
-        setIsLoading(false);
-      } catch (e) {
-        console.error('Failed to restore cached loads:', e);
+    // Only restore cached data if user is logged in
+    if (session) {
+      const cached = sessionStorage.getItem('cachedLoads');
+      const hasLoaded = sessionStorage.getItem('hasLoadedOnce') === 'true';
+      
+      if (cached) {
+        try {
+          setLoads(JSON.parse(cached));
+          setIsLoading(false);
+        } catch (e) {
+          console.error('Failed to restore cached loads:', e);
+        }
       }
+      
+      if (hasLoaded) {
+        setHasLoadedOnce(true);
+      }
+    } else {
+      // Clear cache if not logged in
+      sessionStorage.removeItem("cachedLoads");
+      sessionStorage.removeItem("hasLoadedOnce");
+      setIsLoading(false);
     }
-    
-    if (hasLoaded) {
-      setHasLoadedOnce(true);
-    }
-  }, []);
+  }, [session]);
 
   const fetchLoads = useCallback(async (showLoading = true) => {
     if (showLoading) {
