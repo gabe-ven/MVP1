@@ -20,6 +20,17 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
+  // Reset cached data when the user signs out
+  useEffect(() => {
+    if (!session) {
+      setLoads([]);
+      setHasLoadedOnce(false);
+      setIsLoading(false);
+      sessionStorage.removeItem("cachedLoads");
+      sessionStorage.removeItem("hasLoadedOnce");
+    }
+  }, [session]);
+
   // Restore from sessionStorage after hydration (client-side only)
   useEffect(() => {
     const cached = sessionStorage.getItem('cachedLoads');
@@ -174,6 +185,9 @@ export default function Home() {
   const revenueByBroker = getRevenueByBroker();
   const rpmTrend = getRPMTrend();
 
+  const showLanding = !session;
+  const showDashboard = session;
+
   return (
     <main className="min-h-screen bg-[#0a0a0f]">
       {/* Header */}
@@ -196,7 +210,7 @@ export default function Home() {
             </div>
 
             {/* Navigation Links - Center (only show on hero page) */}
-            {loads.length === 0 && (
+            {showLanding && (
               <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
                 <a
                   href="#features"
@@ -220,7 +234,11 @@ export default function Home() {
               ) : (
                 <button
                   onClick={() => signIn("google")}
-                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all"
+                  className={`px-4 py-2 text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all ${
+                    showLanding 
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-blue-500/50' 
+                      : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:shadow-orange-500/50'
+                  }`}
                 >
                   Sign In
                 </button>
@@ -240,7 +258,7 @@ export default function Home() {
         )}
 
         {/* Hero Section */}
-        {!isLoading && loads.length === 0 && (
+        {!isLoading && showLanding && (
           <section className="relative overflow-hidden min-h-screen">
             {/* Background Pattern */}
             <div className="absolute inset-0 overflow-hidden">
@@ -249,7 +267,7 @@ export default function Home() {
               
               {/* Sophisticated grid with perspective - Subtle with smooth FADE */}
               <div 
-                className="absolute inset-0 h-[150vh] opacity-30"
+                className="absolute inset-0 h-[100vh] opacity-30"
                 style={{
                   backgroundImage: `
                     linear-gradient(to right, rgba(148, 163, 184, 0.6) 1px, transparent 1px),
@@ -258,19 +276,19 @@ export default function Home() {
                   backgroundSize: '80px 80px',
                   transform: 'perspective(1000px) rotateX(60deg) scale(2)',
                   transformOrigin: 'center top',
-                  maskImage: 'linear-gradient(180deg, black 0%, black 3%, rgba(0,0,0,0.98) 10%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.82) 35%, rgba(0,0,0,0.68) 50%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0.32) 78%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
-                  WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 3%, rgba(0,0,0,0.98) 10%, rgba(0,0,0,0.92) 20%, rgba(0,0,0,0.82) 35%, rgba(0,0,0,0.68) 50%, rgba(0,0,0,0.5) 65%, rgba(0,0,0,0.32) 78%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+                  maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.01) 85%, transparent 90%)',
+                  WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.01) 85%, transparent 90%)',
                 }}
               />
               
               {/* Dot pattern overlay - Subtle with smooth FADE */}
               <div 
-                className="absolute inset-0 h-[150vh] opacity-25"
+                className="absolute inset-0 h-[100vh] opacity-25"
                 style={{
                   backgroundImage: 'radial-gradient(circle, rgba(251, 146, 60, 0.5) 1.5px, transparent 1.5px)',
                   backgroundSize: '60px 60px',
-                  maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.95) 12%, rgba(0,0,0,0.88) 22%, rgba(0,0,0,0.78) 35%, rgba(0,0,0,0.64) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.07) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
-                  WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.95) 12%, rgba(0,0,0,0.88) 22%, rgba(0,0,0,0.78) 35%, rgba(0,0,0,0.64) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.07) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+                  maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.9) 15%, rgba(0,0,0,0.75) 28%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.35) 52%, rgba(0,0,0,0.2) 64%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.02) 85%, transparent 90%)',
+                  WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.9) 15%, rgba(0,0,0,0.75) 28%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.35) 52%, rgba(0,0,0,0.2) 64%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.02) 85%, transparent 90%)',
                 }}
               />
               
@@ -291,9 +309,9 @@ export default function Home() {
               </div>
               
               {/* Animated gradient mesh - Subtle with smooth FADE */}
-              <div className="absolute inset-0 h-[150vh]" style={{
-                maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.97) 12%, rgba(0,0,0,0.9) 22%, rgba(0,0,0,0.8) 35%, rgba(0,0,0,0.66) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.06) 95%, rgba(0,0,0,0.015) 98%, transparent 100%)',
-                WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.97) 12%, rgba(0,0,0,0.9) 22%, rgba(0,0,0,0.8) 35%, rgba(0,0,0,0.66) 50%, rgba(0,0,0,0.48) 65%, rgba(0,0,0,0.3) 78%, rgba(0,0,0,0.16) 88%, rgba(0,0,0,0.06) 95%, rgba(0,0,0,0.015) 98%, transparent 100%)',
+              <div className="absolute inset-0 h-[100vh]" style={{
+                maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.92) 18%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.62) 42%, rgba(0,0,0,0.42) 55%, rgba(0,0,0,0.24) 67%, rgba(0,0,0,0.1) 78%, rgba(0,0,0,0.03) 87%, transparent 92%)',
+                WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.92) 18%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.62) 42%, rgba(0,0,0,0.42) 55%, rgba(0,0,0,0.24) 67%, rgba(0,0,0,0.1) 78%, rgba(0,0,0,0.03) 87%, transparent 92%)',
               }}>
                 <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
                 <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-amber-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
@@ -301,9 +319,9 @@ export default function Home() {
               </div>
               
               {/* Scan line effect - Subtle with smooth FADE */}
-              <div className="absolute inset-0 h-[150vh] opacity-10" style={{
-                maskImage: 'linear-gradient(180deg, black 0%, black 4%, rgba(0,0,0,0.93) 15%, rgba(0,0,0,0.84) 28%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.34) 77%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
-                WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 4%, rgba(0,0,0,0.93) 15%, rgba(0,0,0,0.84) 28%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.34) 77%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0.08) 95%, rgba(0,0,0,0.02) 98%, transparent 100%)',
+              <div className="absolute inset-0 h-[100vh] opacity-10" style={{
+                maskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.88) 18%, rgba(0,0,0,0.7) 32%, rgba(0,0,0,0.5) 46%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.15) 73%, rgba(0,0,0,0.05) 84%, rgba(0,0,0,0.01) 92%, transparent 95%)',
+                WebkitMaskImage: 'linear-gradient(180deg, black 0%, black 5%, rgba(0,0,0,0.88) 18%, rgba(0,0,0,0.7) 32%, rgba(0,0,0,0.5) 46%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.15) 73%, rgba(0,0,0,0.05) 84%, rgba(0,0,0,0.01) 92%, transparent 95%)',
               }}>
                 <div className="h-full w-full animate-[scan_8s_linear_infinite]" style={{
                   background: 'linear-gradient(to bottom, transparent 0%, rgba(251, 146, 60, 0.4) 50%, transparent 100%)',
@@ -354,34 +372,69 @@ export default function Home() {
         )}
 
         {/* Features Section */}
-        {!isLoading && loads.length === 0 && (
+        {!isLoading && showLanding && (
           <Features />
         )}
 
         {/* FAQs Section - Only on landing page */}
-        {!isLoading && loads.length === 0 && (
+        {!isLoading && showLanding && (
           <FAQs />
         )}
 
         {/* Dashboard Content */}
-        {loads.length > 0 && (
+        {showDashboard && (
           <div className="custom-screen py-12 space-y-20">
-            <section className="space-y-6">
-              <div className="max-w-xl mx-auto text-center">
-                <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
-                  Key Metrics
-                </h2>
-                <p className="mt-3 text-gray-300">
-                  Overview of your freight operations
-                </p>
+            {loads.length === 0 ? (
+              <div className="min-h-[60vh] flex items-center justify-center">
+                <div className="max-w-2xl mx-auto text-center space-y-6">
+                  <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-4 rounded-2xl shadow-lg shadow-orange-500/50 w-20 h-20 mx-auto flex items-center justify-center">
+                    <TruckIcon className="w-10 h-10 text-white" />
+                  </div>
+                  <h2 className="text-white text-3xl font-bold sm:text-4xl">
+                    Welcome to Load Insights
+                  </h2>
+                  <p className="text-gray-400 text-lg">
+                    Click the <span className="text-orange-400 font-semibold">Sync</span> button in the header to import your rate confirmations from Gmail
+                  </p>
+                  <div className="bg-black/40 backdrop-blur-sm border border-gray-800/30 rounded-xl p-6 text-left space-y-3">
+                    <p className="text-gray-300 text-sm">
+                      <span className="text-orange-400 font-semibold">What happens next:</span>
+                    </p>
+                    <ul className="space-y-2 text-gray-400 text-sm">
+                      <li className="flex items-start space-x-2">
+                        <span className="text-orange-400 mt-0.5">•</span>
+                        <span>We'll scan your Gmail for rate confirmation PDFs from the last 30 days</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-orange-400 mt-0.5">•</span>
+                        <span>AI will extract key data (broker, carrier, rates, routes, etc.)</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-orange-400 mt-0.5">•</span>
+                        <span>Your dashboard will populate with metrics, charts, and load history</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <Metrics
-                totalLoads={metrics.totalLoads}
-                totalRevenue={metrics.totalRevenue}
-                averageRate={metrics.averageRate}
-                averageRPM={metrics.averageRPM}
-              />
-            </section>
+            ) : (
+              <>
+                <section className="space-y-6">
+                  <div className="max-w-xl mx-auto text-center">
+                    <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
+                      Key Metrics
+                    </h2>
+                    <p className="mt-3 text-gray-300">
+                      Overview of your freight operations
+                    </p>
+                  </div>
+                  <Metrics
+                    totalLoads={metrics.totalLoads}
+                    totalRevenue={metrics.totalRevenue}
+                    averageRate={metrics.averageRate}
+                    averageRPM={metrics.averageRPM}
+                  />
+                </section>
 
             {/* Charts Section */}
             <section className="space-y-6">
@@ -424,6 +477,8 @@ export default function Home() {
               </div>
               <LoadTable loads={loads} />
             </section>
+              </>
+            )}
           </div>
         )}
       </div>

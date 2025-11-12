@@ -130,8 +130,10 @@ export async function POST(request: NextRequest) {
                 }
 
                 // Extract load data using AI
-                const loadData = await extractLoadData(text, part.filename);
-                
+                const loadData = await extractLoadData(text);
+                loadData.source_file = part.filename;
+                loadData.extracted_at = new Date().toISOString();
+
                 if (loadData) {
                   extractedLoads.push(loadData);
                 }
@@ -149,18 +151,35 @@ export async function POST(request: NextRequest) {
 
     // Save to storage with user email as identifier
     if (extractedLoads.length > 0) {
-      const { addedCount, duplicateCount } = await addLoads(extractedLoads, session.user?.email || "unknown");
+      const { addedCount, duplicateCount, updatedCount } = await addLoads(
+        extractedLoads,
+        session.user?.email || "unknown"
+      );
       extracted = addedCount;
       duplicates = duplicateCount;
-      failed = pdfsFound - extracted - duplicates;
-    }
+      const refreshed = updatedCount;
+      failed = pdfsFound - addedCount - refreshed;
 
+      return NextResponse.json({
+        success: true,
+        stats: {
+          emailsScanned: allMessages.length,
+          pdfsFound,
+          extracted: addedCount,
+          refreshed,
+          duplicates: duplicateCount,
+          failed,
+        },
+        loads: extractedLoads,
+      });
+    }
     return NextResponse.json({
       success: true,
       stats: {
         emailsScanned: allMessages.length,
         pdfsFound,
         extracted,
+        refreshed: 0,
         duplicates,
         failed,
       },

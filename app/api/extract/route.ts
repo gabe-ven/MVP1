@@ -94,29 +94,24 @@ export async function POST(request: NextRequest) {
 
     // Check for duplicates and save to storage
     let addedCount = 0;
+    let updatedCount = 0;
     if (extractedLoads.length > 0) {
       const { loadLoads } = await import("@/lib/storage");
       const existingLoads = await loadLoads(userEmail || undefined);
       const existingLoadIds = new Set(existingLoads.map(load => load.load_id));
-      
-      // Separate new loads from duplicates
-      const newLoads = [];
+
       for (const load of extractedLoads) {
         if (existingLoadIds.has(load.load_id)) {
           duplicates.push({
             load_id: load.load_id,
             filename: load.source_file,
           });
-        } else {
-          newLoads.push(load);
         }
       }
-      
-      // Only save new loads
-      if (newLoads.length > 0) {
-        await addLoads(newLoads, userEmail || undefined);
-        addedCount = newLoads.length;
-      }
+
+      const result = await addLoads(extractedLoads, userEmail || undefined);
+      addedCount = result.addedCount;
+      updatedCount = result.updatedCount;
     }
 
     // Return results
@@ -125,6 +120,7 @@ export async function POST(request: NextRequest) {
       extracted: addedCount,
       failed: errors.length,
       duplicates: duplicates.length,
+      updated: updatedCount,
       loads: extractedLoads,
       errors: errors.length > 0 ? errors : undefined,
       duplicateDetails: duplicates.length > 0 ? duplicates : undefined,

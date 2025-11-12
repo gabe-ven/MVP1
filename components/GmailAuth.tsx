@@ -173,9 +173,21 @@ export default function GmailAuth() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Duplicates:</span>{" "}
+                    <span className="text-gray-500">Loads refreshed:</span>{" "}
+                    <span className="font-medium text-blue-400">
+                      {syncStats.refreshed || 0}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Duplicates detected:</span>{" "}
                     <span className="font-medium text-gray-400">
                       {syncStats.duplicates}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Failed:</span>{" "}
+                    <span className="font-medium text-red-400">
+                      {syncStats.failed || 0}
                     </span>
                   </div>
                 </div>

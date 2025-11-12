@@ -51,14 +51,14 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
       }
 
       setLastSync(new Date());
-      setNewLoadsCount(data.stats.extracted || 0);
+      setNewLoadsCount((data.stats.extracted || 0) + (data.stats.refreshed || 0));
       
       if (onSyncComplete) {
         onSyncComplete();
       }
 
       // Clear new loads count after 5 seconds
-      if (data.stats.extracted > 0) {
+      if ((data.stats.extracted || 0) + (data.stats.refreshed || 0) > 0) {
         setTimeout(() => setNewLoadsCount(0), 5000);
       }
     } catch (error: any) {

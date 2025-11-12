@@ -166,6 +166,24 @@ CRITICAL EXTRACTION RULES (IN ORDER OF IMPORTANCE):
 
     const extractedData = JSON.parse(functionCall.arguments) as LoadData;
 
+    // Fallback heuristics for missing equipment type
+    if (!extractedData.equipment_type || extractedData.equipment_type.trim().length === 0) {
+      const trailerTypeMatch =
+        pdfText.match(/Trailer\s*Type[:\-\s]*([^\n\r]+)/i) ||
+        pdfText.match(/Equipment\s*Type[:\-\s]*([^\n\r]+)/i);
+
+      if (trailerTypeMatch) {
+        const candidate = trailerTypeMatch[1]
+          .replace(/\s+/g, " ")
+          .replace(/^[\-\:]+/, "")
+          .trim();
+
+        if (candidate && !/^(n\/?a|na|none)$/i.test(candidate)) {
+          extractedData.equipment_type = candidate;
+        }
+      }
+    }
+
     // Always calculate miles using Google Maps API from first pickup to last delivery
     const pickups = extractedData.stops?.filter(s => s.type === "pickup") || [];
     const deliveries = extractedData.stops?.filter(s => s.type === "delivery") || [];
