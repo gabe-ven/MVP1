@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loadLoads } from "@/lib/storage";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -8,7 +10,9 @@ const openai = new OpenAI({
 
 export async function GET(request: NextRequest) {
   try {
-    const loads = await loadLoads();
+    const session = await getServerSession(authOptions);
+    const userEmail = session?.user?.email || undefined;
+    const loads = await loadLoads(userEmail);
 
     if (loads.length === 0) {
       return NextResponse.json({
