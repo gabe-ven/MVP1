@@ -12,13 +12,14 @@ import Features from "@/components/Features";
 import FAQs from "@/components/FAQs";
 import AnimatedTrucks from "@/components/AnimatedTrucks";
 import { LoadData } from "@/lib/schema";
-import { TruckIcon } from "lucide-react";
+import { TruckIcon, RefreshCw, Mail, Cpu, LineChart } from "lucide-react";
 
 export default function Home() {
   const { data: session } = useSession();
   const [loads, setLoads] = useState<LoadData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [isSyncingLanding, setIsSyncingLanding] = useState(false);
 
   // Reset cached data when the user signs out
   useEffect(() => {
@@ -110,6 +111,19 @@ export default function Home() {
       window.removeEventListener('focus', handleFocus);
       clearInterval(pollInterval);
     };
+  }, [fetchLoads]);
+
+  const handleLandingSync = useCallback(async () => {
+    try {
+      setIsSyncingLanding(true);
+      const res = await fetch("/api/gmail/sync", { method: "POST" });
+      await res.json().catch(() => ({}));
+      await fetchLoads(false);
+    } catch {
+      // Ignore; header status component can reflect errors
+    } finally {
+      setIsSyncingLanding(false);
+    }
   }, [fetchLoads]);
 
   // Calculate metrics
@@ -394,34 +408,53 @@ export default function Home() {
           <div className="custom-screen py-12 space-y-20">
             {loads.length === 0 ? (
               <div className="min-h-[60vh] flex items-center justify-center">
-                <div className="max-w-2xl mx-auto text-center space-y-6">
-                  <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-4 rounded-2xl shadow-lg shadow-orange-500/50 w-20 h-20 mx-auto flex items-center justify-center">
-                    <TruckIcon className="w-10 h-10 text-white" />
-                  </div>
-                  <h2 className="text-white text-3xl font-bold sm:text-4xl">
+                <div className="max-w-3xl mx-auto text-center space-y-6">
+                  <h2 className="text-white text-3xl font-bold sm:text-5xl tracking-tight">
                     Welcome to Load Insights
                   </h2>
-                  <p className="text-gray-400 text-lg">
-                    Click the <span className="text-orange-400 font-semibold">Sync</span> button in the header to import your rate confirmations from Gmail
+                  <p className="text-gray-300 text-lg">
+                    Sync your Gmail and we’ll import your recent rate confirmations to build your dashboard.
                   </p>
-                  <div className="bg-black/40 backdrop-blur-sm border border-gray-800/30 rounded-xl p-6 text-left space-y-3">
-                    <p className="text-gray-300 text-sm">
-                      <span className="text-orange-400 font-semibold">What happens next:</span>
-                    </p>
-                    <ul className="space-y-2 text-gray-400 text-sm">
-                      <li className="flex items-start space-x-2">
-                        <span className="text-orange-400 mt-0.5">•</span>
-                        <span>We'll scan your Gmail for rate confirmation PDFs from the last 30 days</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <span className="text-orange-400 mt-0.5">•</span>
-                        <span>AI will extract key data (broker, carrier, rates, routes, etc.)</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <span className="text-orange-400 mt-0.5">•</span>
-                        <span>Your dashboard will populate with metrics, charts, and load history</span>
-                      </li>
-                    </ul>
+                  <div className="pt-2">
+                    <button
+                      onClick={handleLandingSync}
+                      disabled={isSyncingLanding}
+                      className="inline-flex items-center justify-center space-x-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 active:scale-95 transition-all font-semibold shadow-2xl shadow-blue-500/30 disabled:opacity-50"
+                    >
+                      <RefreshCw className={`w-5 h-5 ${isSyncingLanding ? "animate-spin" : ""}`} />
+                      <span>{isSyncingLanding ? "Syncing Gmail..." : "Sync Gmail Now"}</span>
+                    </button>
+                  </div>
+                  <div className="bg-black/40 backdrop-blur-sm border border-gray-800/30 rounded-2xl p-8 mt-4 max-w-4xl mx-auto">
+                    <h3 className="text-sm tracking-wider text-gray-300 uppercase text-center">
+                      What happens next
+                    </h3>
+                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="flex items-start space-x-3 text-left">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg">
+                          <Mail className="w-10 h-10 text-blue-400" />
+                        </div>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          We’ll scan your Gmail for rate confirmation PDFs from the last 30 days
+                        </p>
+                      </div>
+                      <div className="flex items-start space-x-3 text-left">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg">
+                          <Cpu className="w-10 h-10 text-violet-400" />
+                        </div>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          AI will extract key data (broker, carrier, rates, routes, etc.)
+                        </p>
+                      </div>
+                      <div className="flex items-start space-x-3 text-left">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg">
+                          <LineChart className="w-10 h-10 text-emerald-400" />
+                        </div>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          Your dashboard will populate with metrics, charts, and load history
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
