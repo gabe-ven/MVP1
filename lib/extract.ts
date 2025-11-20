@@ -51,7 +51,7 @@ export async function extractLoadData(pdfText: string): Promise<LoadData> {
   try {
     // Call OpenAI with function calling to extract structured data
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o-mini", // Using more affordable model to avoid quota issues
       messages: [
         {
           role: "system",
@@ -214,8 +214,19 @@ CRITICAL EXTRACTION RULES (IN ORDER OF IMPORTANCE):
     }
 
     return extractedData;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error extracting load data:", error);
+    
+    // Check if it's a quota error
+    if (error?.status === 429 || error?.code === 'insufficient_quota') {
+      throw new Error("QUOTA_EXCEEDED");
+    }
+    
+    // Check if it's a rate limit error
+    if (error?.status === 429) {
+      throw new Error("RATE_LIMIT");
+    }
+    
     throw new Error("Failed to extract load data from PDF");
   }
 }

@@ -88,9 +88,15 @@ export async function POST(request: NextRequest) {
     let extracted = 0;
     let duplicates = 0;
     let failed = 0;
+    let quotaExceeded = false;
     const extractedLoads: any[] = [];
 
     for (const message of allMessages) {
+      // Stop processing if quota exceeded
+      if (quotaExceeded) {
+        break;
+      }
+
       try {
         // Get full message details
         const msgData = await gmail.users.messages.get({
@@ -109,6 +115,11 @@ export async function POST(request: NextRequest) {
             part.body?.attachmentId
           ) {
             pdfsFound++;
+
+            // Stop processing if quota exceeded
+            if (quotaExceeded) {
+              break;
+            }
 
             try {
               // Download attachment
@@ -140,8 +151,15 @@ export async function POST(request: NextRequest) {
                   extractedLoads.push(loadData);
                 }
               }
-            } catch (pdfError) {
+            } catch (pdfError: any) {
               console.error(`Error processing PDF ${part.filename}:`, pdfError);
+              
+              // Check if quota exceeded
+              if (pdfError?.message === "QUOTA_EXCEEDED") {
+                quotaExceeded = true;
+                break;
+              }
+              
               failed++;
             }
           }
@@ -160,9 +178,9 @@ export async function POST(request: NextRequest) {
       extracted = addedCount;
       duplicates = duplicateCount;
       const refreshed = updatedCount;
-      failed = pdfsFound - addedCount - refreshed;
 
-      return NextResponse.json({
+      // Build response with quota warning if applicable
+      const response: any = {
         success: true,
         stats: {
           emailsScanned: allMessages.length,
@@ -170,11 +188,35 @@ export async function POST(request: NextRequest) {
           extracted: addedCount,
           refreshed,
           duplicates: duplicateCount,
-          failed,
+          failed: pdfsFound - addedCount - duplicateCount - refreshed,
         },
         loads: extractedLoads,
-      });
+      };
+
+      if (quotaExceeded) {
+        response.warning = "QUOTA_EXCEEDED";
+        response.message = `Successfully processed ${addedCount} load(s), but OpenAI API quota was exceeded. Please check your OpenAI billing at https://platform.openai.com/account/billing or try again later.`;
+      }
+
+      return NextResponse.json(response);
     }
+
+    // If quota exceeded and no loads extracted
+    if (quotaExceeded) {
+      return NextResponse.json({
+        success: false,
+        error: "OpenAI API quota exceeded. Please check your OpenAI account billing at https://platform.openai.com/account/billing and ensure you have credits available.",
+        stats: {
+          emailsScanned: allMessages.length,
+          pdfsFound,
+          extracted: 0,
+          refreshed: 0,
+          duplicates: 0,
+          failed: pdfsFound,
+        },
+      }, { status: 429 });
+    }
+
     return NextResponse.json({
       success: true,
       stats: {

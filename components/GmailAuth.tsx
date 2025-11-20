@@ -23,15 +23,26 @@ export default function GmailAuth() {
       const data = await response.json();
 
       if (!response.ok) {
+        // Check if it's a quota error
+        if (response.status === 429 && data.error) {
+          throw new Error(data.error);
+        }
         throw new Error(data.error || "Failed to sync Gmail");
+      }
+
+      // Show warning if quota exceeded but some loads were processed
+      if (data.warning === "QUOTA_EXCEEDED" && data.message) {
+        setSyncError(data.message);
       }
 
       setSyncStats(data.stats);
       
-      // Trigger page reload to show new data
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // Only trigger page reload if no error
+      if (!data.warning) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
     } catch (error: any) {
       setSyncError(error.message);
     } finally {
