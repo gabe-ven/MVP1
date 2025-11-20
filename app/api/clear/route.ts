@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { clearLoads } from "@/lib/storage";
 
+export const dynamic = 'force-dynamic';
+
 /**
  * DELETE /api/clear
  * Clears all stored loads for the authenticated user (or default data if not authenticated)

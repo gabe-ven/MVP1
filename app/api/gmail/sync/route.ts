@@ -6,6 +6,8 @@ import { extractLoadData } from "@/lib/extract";
 import { addLoads } from "@/lib/storage";
 import pdf from "pdf-parse";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     // Check if user is authenticated
