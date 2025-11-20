@@ -13,7 +13,9 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [newLoadsCount, setNewLoadsCount] = useState(0);
+  const [syncStats, setSyncStats] = useState<any>(null);
 
   // DISABLED: Auto-sync on mount if signed in
   // useEffect(() => {
@@ -38,6 +40,7 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
   const handleSync = async (silent = false) => {
     if (!silent) setIsSyncing(true);
     setSyncError(null);
+    setSyncMessage(null);
 
     try {
       const response = await fetch("/api/gmail/sync", {
@@ -55,21 +58,29 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
       }
 
       setLastSync(new Date());
+      setSyncStats(data.stats);
       setNewLoadsCount((data.stats.extracted || 0) + (data.stats.refreshed || 0));
       
       // Show warning if quota exceeded but some loads were processed
       if (data.warning === "QUOTA_EXCEEDED" && data.message) {
         setSyncError(data.message);
         setTimeout(() => setSyncError(null), 15000); // Show for 15 seconds
+      } else if (data.message) {
+        // Show info message (e.g., PDF limit reached, already processed, etc.)
+        setSyncMessage(data.message);
+        setTimeout(() => setSyncMessage(null), 10000); // Show for 10 seconds
       }
       
       if (onSyncComplete) {
         onSyncComplete();
       }
 
-      // Clear new loads count after 5 seconds
+      // Clear new loads count and stats after 8 seconds
       if ((data.stats.extracted || 0) + (data.stats.refreshed || 0) > 0) {
-        setTimeout(() => setNewLoadsCount(0), 5000);
+        setTimeout(() => {
+          setNewLoadsCount(0);
+          setSyncStats(null);
+        }, 8000);
       }
     } catch (error: any) {
       setSyncError(error.message);
@@ -108,6 +119,13 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
           </div>
         )}
 
+        {/* Sync Stats Badge */}
+        {syncStats && !newLoadsCount && (
+          <div className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-md border border-blue-500/30">
+            {syncStats.pdfsProcessed || 0} processed, {syncStats.skipped || 0} skipped
+          </div>
+        )}
+
         {/* Sync Button */}
         <button
           onClick={() => handleSync(false)}
@@ -136,6 +154,16 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
           <div className="flex items-start space-x-2">
             <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-red-300">{syncError}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Info Message Toast */}
+      {syncMessage && !syncError && (
+        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg shadow-lg z-50">
+          <div className="flex items-start space-x-2">
+            <CheckCircle className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-blue-300">{syncMessage}</p>
           </div>
         </div>
       )}

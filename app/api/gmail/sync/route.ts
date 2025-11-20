@@ -3,10 +3,17 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { google } from "googleapis";
 import { extractLoadData } from "@/lib/extract";
-import { addLoads } from "@/lib/storage";
+import { addLoads, loadLoads } from "@/lib/storage";
 import pdf from "pdf-parse";
 
 export const dynamic = 'force-dynamic';
+
+// Configuration
+const MAX_PDFS_PER_SYNC = 20; // Limit to 20 PDFs per sync to avoid quota issues
+const DELAY_BETWEEN_PDFS_MS = 1000; // 1 second delay between PDF processing to avoid rate limits
+
+// Helper function to add delay between API calls
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,6 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (allMessages.length === 0) {
+      console.log("📧 No rate confirmation emails found in the last 30 days");
       return NextResponse.json({
         success: true,
         message: "No rate confirmation emails found in the last 30 days",
@@ -79,21 +87,39 @@ export async function POST(request: NextRequest) {
           extracted: 0,
           duplicates: 0,
           failed: 0,
+          skipped: 0,
         },
       });
     }
 
+    console.log(`📧 Found ${allMessages.length} potential email(s) with rate confirmations`);
+
+    // Load existing loads to check for already-processed PDFs
+    const existingLoads = await loadLoads(session.user?.email || "unknown");
+    const processedFiles = new Set(
+      existingLoads
+        .filter(load => load.source_file)
+        .map(load => load.source_file)
+    );
+    
+    console.log(`📁 Already processed ${processedFiles.size} PDF(s) previously`);
+
     // Process each email and extract PDFs
     let pdfsFound = 0;
+    let pdfsProcessed = 0;
     let extracted = 0;
     let duplicates = 0;
+    let skipped = 0;
     let failed = 0;
     let quotaExceeded = false;
     const extractedLoads: any[] = [];
 
     for (const message of allMessages) {
-      // Stop processing if quota exceeded
-      if (quotaExceeded) {
+      // Stop processing if quota exceeded or reached PDF limit
+      if (quotaExceeded || pdfsProcessed >= MAX_PDFS_PER_SYNC) {
+        if (pdfsProcessed >= MAX_PDFS_PER_SYNC) {
+          console.log(`⚠️  Reached limit of ${MAX_PDFS_PER_SYNC} PDFs per sync. Additional PDFs will be processed in next sync.`);
+        }
         break;
       }
 
@@ -116,12 +142,21 @@ export async function POST(request: NextRequest) {
           ) {
             pdfsFound++;
 
-            // Stop processing if quota exceeded
-            if (quotaExceeded) {
+            // Stop processing if quota exceeded or reached PDF limit
+            if (quotaExceeded || pdfsProcessed >= MAX_PDFS_PER_SYNC) {
               break;
             }
 
+            // Check if this PDF was already processed
+            if (processedFiles.has(part.filename)) {
+              console.log(`⏭️  Skipping already processed: ${part.filename}`);
+              skipped++;
+              continue;
+            }
+
             try {
+              console.log(`📄 Processing PDF ${pdfsProcessed + 1}/${Math.min(pdfsFound, MAX_PDFS_PER_SYNC)}: ${part.filename}`);
+
               // Download attachment
               const attachment = await gmail.users.messages.attachments.get({
                 userId: "me",
@@ -138,39 +173,66 @@ export async function POST(request: NextRequest) {
                 const text = pdfData.text;
 
                 if (!text || text.trim().length === 0) {
+                  console.log(`❌ Failed to extract text from: ${part.filename}`);
                   failed++;
+                  pdfsProcessed++;
                   continue;
                 }
 
                 // Extract load data using AI
+                console.log(`🤖 Extracting load data from: ${part.filename}`);
                 const loadData = await extractLoadData(text);
                 loadData.source_file = part.filename;
                 loadData.extracted_at = new Date().toISOString();
 
-                if (loadData) {
+                if (loadData && loadData.load_id) {
                   extractedLoads.push(loadData);
+                  console.log(`✅ Successfully extracted load: ${loadData.load_id} from ${part.filename}`);
+                } else {
+                  console.log(`⚠️  Extracted data but missing load_id from: ${part.filename}`);
+                  failed++;
+                }
+
+                pdfsProcessed++;
+
+                // Add delay between API calls to avoid rate limits
+                if (pdfsProcessed < MAX_PDFS_PER_SYNC && !quotaExceeded) {
+                  await delay(DELAY_BETWEEN_PDFS_MS);
                 }
               }
             } catch (pdfError: any) {
-              console.error(`Error processing PDF ${part.filename}:`, pdfError);
+              console.error(`❌ Error processing PDF ${part.filename}:`, pdfError.message);
               
               // Check if quota exceeded
               if (pdfError?.message === "QUOTA_EXCEEDED") {
+                console.log(`🚫 OpenAI API quota exceeded. Processed ${pdfsProcessed} PDF(s) before hitting limit.`);
                 quotaExceeded = true;
                 break;
               }
               
+              // Continue processing other PDFs even if this one failed
               failed++;
+              pdfsProcessed++;
             }
           }
         }
-      } catch (msgError) {
-        console.error(`Error processing message ${message.id}:`, msgError);
+      } catch (msgError: any) {
+        console.error(`❌ Error processing message ${message.id}:`, msgError.message);
+        // Continue processing other messages even if this one failed
       }
     }
 
+    console.log(`\n📊 Processing Summary:`);
+    console.log(`   Emails scanned: ${allMessages.length}`);
+    console.log(`   PDFs found: ${pdfsFound}`);
+    console.log(`   PDFs processed: ${pdfsProcessed}`);
+    console.log(`   PDFs skipped (already processed): ${skipped}`);
+    console.log(`   Loads extracted: ${extractedLoads.length}`);
+    console.log(`   Failed: ${failed}`);
+
     // Save to storage with user email as identifier
     if (extractedLoads.length > 0) {
+      console.log(`💾 Saving ${extractedLoads.length} load(s) to database...`);
       const { addedCount, duplicateCount, updatedCount } = await addLoads(
         extractedLoads,
         session.user?.email || "unknown"
@@ -179,16 +241,20 @@ export async function POST(request: NextRequest) {
       duplicates = duplicateCount;
       const refreshed = updatedCount;
 
+      console.log(`✅ Database updated: ${addedCount} added, ${updatedCount} refreshed, ${duplicateCount} duplicates`);
+
       // Build response with quota warning if applicable
       const response: any = {
         success: true,
         stats: {
           emailsScanned: allMessages.length,
           pdfsFound,
+          pdfsProcessed,
+          skipped,
           extracted: addedCount,
           refreshed,
           duplicates: duplicateCount,
-          failed: pdfsFound - addedCount - duplicateCount - refreshed,
+          failed,
         },
         loads: extractedLoads,
       };
@@ -196,6 +262,12 @@ export async function POST(request: NextRequest) {
       if (quotaExceeded) {
         response.warning = "QUOTA_EXCEEDED";
         response.message = `Successfully processed ${addedCount} load(s), but OpenAI API quota was exceeded. Please check your OpenAI billing at https://platform.openai.com/account/billing or try again later.`;
+        console.log(`⚠️  ${response.message}`);
+      }
+
+      if (pdfsProcessed >= MAX_PDFS_PER_SYNC) {
+        response.message = `Processed ${MAX_PDFS_PER_SYNC} PDFs (limit per sync). Run sync again to process remaining PDFs.`;
+        console.log(`ℹ️  ${response.message}`);
       }
 
       return NextResponse.json(response);
@@ -203,25 +275,32 @@ export async function POST(request: NextRequest) {
 
     // If quota exceeded and no loads extracted
     if (quotaExceeded) {
+      console.log(`🚫 No loads extracted due to quota exceeded`);
       return NextResponse.json({
         success: false,
         error: "OpenAI API quota exceeded. Please check your OpenAI account billing at https://platform.openai.com/account/billing and ensure you have credits available.",
         stats: {
           emailsScanned: allMessages.length,
           pdfsFound,
+          pdfsProcessed,
+          skipped,
           extracted: 0,
           refreshed: 0,
           duplicates: 0,
-          failed: pdfsFound,
+          failed,
         },
       }, { status: 429 });
     }
 
+    console.log(`✅ Sync complete`);
     return NextResponse.json({
       success: true,
+      message: skipped > 0 ? `${skipped} PDF(s) were already processed. No new loads found.` : "No new loads found.",
       stats: {
         emailsScanned: allMessages.length,
         pdfsFound,
+        pdfsProcessed,
+        skipped,
         extracted,
         refreshed: 0,
         duplicates,
