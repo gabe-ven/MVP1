@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { google } from "googleapis";
 import { extractLoadData } from "@/lib/extract";
-import { addLoads } from "@/lib/storage";
+import { addLoads, loadLoads } from "@/lib/storage";
+import { syncBrokersFromLoads } from "@/lib/crm-storage";
 import pdf from "pdf-parse";
 
 export const dynamic = 'force-dynamic';
@@ -178,6 +179,15 @@ export async function POST(request: NextRequest) {
       extracted = addedCount;
       duplicates = duplicateCount;
       const refreshed = updatedCount;
+
+      // Auto-sync brokers from all loads (in the background, don't block response)
+      if (session.user?.email) {
+        loadLoads(session.user.email)
+          .then((allLoads) => syncBrokersFromLoads(allLoads, session.user!.email))
+          .catch((error) => {
+            console.error("Background broker sync failed:", error);
+          });
+      }
 
       // Build response with quota warning if applicable
       const response: any = {
