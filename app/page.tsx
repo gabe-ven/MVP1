@@ -11,6 +11,7 @@ import GmailStatus from "@/components/GmailStatus";
 import Features from "@/components/Features";
 import FAQs from "@/components/FAQs";
 import AnimatedTrucks from "@/components/AnimatedTrucks";
+import ChatBot from "@/components/ChatBot";
 import { LoadData } from "@/lib/schema";
 import { TruckIcon, RefreshCw, Mail, Cpu, LineChart } from "lucide-react";
 
@@ -523,6 +524,9 @@ export default function Home() {
           </div>
         )}
       </div>
+      
+      {/* AI Chatbot - Available when signed in */}
+      {session && <ChatBot />}
     </main>
   );
 }
