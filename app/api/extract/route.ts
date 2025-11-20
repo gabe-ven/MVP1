@@ -5,6 +5,8 @@ import pdf from "pdf-parse";
 import { extractLoadData } from "@/lib/extract";
 import { addLoads } from "@/lib/storage";
 
+export const dynamic = 'force-dynamic';
+
 // CORS headers for Chrome extension
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
