@@ -199,14 +199,6 @@ export default function DashboardPage() {
           <>
             {/* AI Assistant */}
             <section className="space-y-6 pb-8">
-              <div className="max-w-xl mx-auto text-center">
-                <h2 className="text-gray-900 text-3xl font-bold sm:text-4xl">
-                  AI Assistant
-                </h2>
-                <p className="mt-3 text-gray-600">
-                  Get instant insights about your freight data
-                </p>
-              </div>
               <AIAssistant />
             </section>
 
