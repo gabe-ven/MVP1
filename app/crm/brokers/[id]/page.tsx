@@ -22,6 +22,7 @@ import {
   MapPin,
   Edit2,
   CheckCircle2,
+  ArrowLeft,
 } from "lucide-react";
 
 export default function BrokerDetailPage({ params }: { params: { id: string } }) {
@@ -172,21 +173,29 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Header */}
       <header className="border-b border-gray-200 sticky top-0 z-40 backdrop-blur-xl bg-white/90">
-        <div className="custom-screen py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.push("/crm")}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                ← Back to CRM
-              </button>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center gap-6">
+            <button
+              onClick={() => router.push("/crm")}
+              className="flex items-center space-x-2 px-4 py-2 bg-white/50 hover:bg-gray-50 rounded-lg transition-all border border-gray-200 text-sm font-medium text-gray-700"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back</span>
+            </button>
+            <div className="flex-1">
+              <h1 className="text-xl font-semibold text-gray-900">
+                Broker Details
+              </h1>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {broker.broker_name}
+              </p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="custom-screen py-12 space-y-8">
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Broker Info Card */}
         <div className="glass-card rounded-2xl p-8 border border-gray-200">
           <div className="flex items-start justify-between mb-6">
