@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import LoadTable from "@/components/LoadTable";
 import Metrics from "@/components/Metrics";
 import Charts from "@/components/Charts";
@@ -18,6 +19,7 @@ import { TruckIcon, RefreshCw, Mail, Cpu, LineChart, Building2, Users, CheckCirc
 
 export default function Home() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [loads, setLoads] = useState<LoadData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
@@ -160,6 +162,15 @@ export default function Home() {
       clearInterval(pollInterval);
     };
   }, [fetchLoads]);
+
+  // Check URL params for tab selection
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "crm" && session) {
+      setActiveTab("crm");
+    }
+  }, [searchParams, session]);
 
   // Fetch CRM data when CRM tab is active
   useEffect(() => {
@@ -632,38 +643,50 @@ export default function Home() {
                     {/* CRM Stats */}
                     <section className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="glass-effect rounded-xl p-6 border border-white/10">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <Users className="w-5 h-5 text-blue-400" />
-                            <p className="text-sm text-gray-400">Total Brokers</p>
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <Users className="w-5 h-5 text-blue-400" />
+                              <p className="text-sm text-gray-400">Total Brokers</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{allBrokers.length}</p>
                           </div>
-                          <p className="text-3xl font-bold text-white">{allBrokers.length}</p>
                         </div>
 
-                        <div className="glass-effect rounded-xl p-6 border border-white/10">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <TruckIcon className="w-5 h-5 text-green-400" />
-                            <p className="text-sm text-gray-400">Total Revenue</p>
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <TruckIcon className="w-5 h-5 text-green-400" />
+                              <p className="text-sm text-gray-400">Total Revenue</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">
+                              ${(totalRevenue / 1000).toFixed(0)}K
+                            </p>
                           </div>
-                          <p className="text-3xl font-bold text-white">
-                            ${(totalRevenue / 1000).toFixed(0)}K
-                          </p>
                         </div>
 
-                        <div className="glass-effect rounded-xl p-6 border border-white/10">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                            <p className="text-sm text-gray-400">Pending Tasks</p>
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-violet-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <CheckCircle2 className="w-5 h-5 text-purple-400" />
+                              <p className="text-sm text-gray-400">Pending Tasks</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{tasks.length}</p>
                           </div>
-                          <p className="text-3xl font-bold text-white">{tasks.length}</p>
                         </div>
 
-                        <div className="glass-effect rounded-xl p-6 border border-white/10">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <AlertCircle className="w-5 h-5 text-red-400" />
-                            <p className="text-sm text-gray-400">Overdue Tasks</p>
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-rose-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <AlertCircle className="w-5 h-5 text-red-400" />
+                              <p className="text-sm text-gray-400">Overdue Tasks</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{overdueTasks.length}</p>
                           </div>
-                          <p className="text-3xl font-bold text-white">{overdueTasks.length}</p>
                         </div>
                       </div>
                     </section>

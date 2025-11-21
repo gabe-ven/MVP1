@@ -158,10 +158,10 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white mb-2">Broker Not Found</h2>
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/?tab=crm")}
             className="text-orange-400 hover:text-orange-300"
           >
-            ← Back to Dashboard
+            ← Back to CRM
           </button>
         </div>
       </div>
@@ -176,10 +176,10 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/?tab=crm")}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                ← Back to Dashboard
+                ← Back to CRM
               </button>
             </div>
           </div>

@@ -57,8 +57,8 @@ export default function BrokerCard({ broker }: BrokerCardProps) {
       className="glass-effect rounded-xl p-6 border border-white/10 hover:border-orange-500/50 transition-all cursor-pointer group"
     >
       {/* Header with name and status */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-start space-x-3 flex-1 min-w-0">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex items-start space-x-3 flex-1 min-w-0 max-w-[70%]">
           <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-2.5 rounded-lg flex-shrink-0">
             <Building2 className="w-5 h-5 text-white" />
           </div>
@@ -68,19 +68,19 @@ export default function BrokerCard({ broker }: BrokerCardProps) {
             </h3>
             {broker.broker_email && (
               <div className="flex items-center space-x-1.5 mt-1 text-xs text-gray-400">
-                <Mail className="w-3 h-3" />
+                <Mail className="w-3 h-3 flex-shrink-0" />
                 <span className="truncate">{broker.broker_email}</span>
               </div>
             )}
             {broker.broker_phone && (
               <div className="flex items-center space-x-1.5 mt-1 text-xs text-gray-400">
-                <Phone className="w-3 h-3" />
+                <Phone className="w-3 h-3 flex-shrink-0" />
                 <span>{broker.broker_phone}</span>
               </div>
             )}
           </div>
         </div>
-        <div className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center space-x-1.5 ${getStatusColor(broker.status)} flex-shrink-0`}>
+        <div className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center space-x-1.5 ${getStatusColor(broker.status)} flex-shrink-0 ml-auto`}>
           <Circle className="w-2 h-2 fill-current" />
           <span className="capitalize">{broker.status}</span>
         </div>
