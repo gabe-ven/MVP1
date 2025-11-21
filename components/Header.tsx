@@ -27,11 +27,11 @@ export default function Header({ onSyncComplete }: HeaderProps) {
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
               <TruckIcon className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-                Load Insights
+            <div className="text-left">
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight text-left">
+                Noctem
               </h1>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 text-left">
                 AI-Powered Rate Analysis
               </p>
             </div>

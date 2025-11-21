@@ -51,7 +51,7 @@ const Features = () => {
             Everything You Need to Manage Your Loads
           </h2>
           <p className="mt-3 text-gray-600">
-            Load Insights provides powerful tools to help you analyze your freight business and make data-driven decisions.
+            Noctem provides powerful tools to help you analyze your freight business and make data-driven decisions.
           </p>
         </div>
       </LayoutEffect>

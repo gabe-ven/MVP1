@@ -6,7 +6,7 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Load Insights MVP",
+  title: "Noctem",
   description: "Rate confirmation extraction and analysis dashboard",
   icons: {
     icon: "/favicon.svg",

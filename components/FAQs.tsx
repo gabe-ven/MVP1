@@ -33,7 +33,7 @@ const FAQs = () => (
   <section id="faq" className="custom-screen py-20">
     <div className="max-w-xl text-center xl:mx-auto">
       <h2 className="text-gray-900 text-3xl font-extrabold sm:text-4xl">Everything you need to know</h2>
-      <p className="mt-3 text-gray-600">Here are the most common questions about Load Insights.</p>
+      <p className="mt-3 text-gray-600">Here are the most common questions about Noctem.</p>
     </div>
     <div className="mt-12">
       <LayoutEffect

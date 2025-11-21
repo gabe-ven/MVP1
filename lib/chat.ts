@@ -80,7 +80,7 @@ export function formatLoadDetails(loads: LoadData[]): string {
  * Get system prompt for the chatbot
  */
 export function getSystemPrompt(): string {
-  return `You are an AI assistant for Load Insights, a freight rate confirmation analysis platform. You help users understand their freight business data.
+  return `You are an AI assistant for Noctem, a freight rate confirmation analysis platform. You help users understand their freight business data.
 
 Your capabilities:
 - Answer questions about load metrics (total loads, revenue, RPM, averages)

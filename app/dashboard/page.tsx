@@ -178,7 +178,7 @@ export default function DashboardPage() {
           <div className="min-h-[60vh] flex items-center justify-center">
             <div className="max-w-3xl mx-auto text-center space-y-6">
               <h2 className="text-gray-900 text-3xl font-bold sm:text-5xl tracking-tight">
-                Welcome to Load Insights
+                Welcome to Noctem
               </h2>
               <p className="text-gray-600 text-lg">
                 Sync your Gmail and we'll import your recent rate confirmations to build your dashboard.

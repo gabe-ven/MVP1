@@ -42,8 +42,8 @@ export default function AIAssistant() {
     {
       id: "help",
       title: "General Help",
-      description: "Help me understand how to use Load Insights effectively.",
-      prompt: "Help me understand how to use Load Insights effectively.",
+      description: "Help me understand how to use Noctem effectively.",
+      prompt: "Help me understand how to use Noctem effectively.",
       icon: HelpCircle,
       gradient: "from-orange-500 to-amber-600",
     },

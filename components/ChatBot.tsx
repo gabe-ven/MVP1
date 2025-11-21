@@ -17,7 +17,7 @@ export default function ChatBot({ className = "" }: ChatBotProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hi! I'm your Load Insights assistant. I can help you analyze your freight data, answer questions about your loads, brokers, routes, and more. What would you like to know?",
+      content: "Hi! I'm your Noctem assistant. I can help you analyze your freight data, answer questions about your loads, brokers, routes, and more. What would you like to know?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -134,7 +134,7 @@ export default function ChatBot({ className = "" }: ChatBotProps) {
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-white font-semibold text-sm">Load Insights AI</h3>
+            <h3 className="text-white font-semibold text-sm">Noctem AI</h3>
             <p className="text-xs text-gray-400">Ask me anything about your loads</p>
           </div>
         </div>
