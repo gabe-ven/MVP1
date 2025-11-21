@@ -13,8 +13,8 @@ export default function LoadTable({ loads }: LoadTableProps) {
   
   if (loads.length === 0) {
     return (
-      <div className="glass-effect rounded-2xl p-8 text-center">
-        <p className="text-gray-400">
+      <div className="glass-card rounded-2xl p-8 text-center">
+        <p className="text-gray-600">
           No loads yet. Upload some rate confirmation PDFs to get started.
         </p>
       </div>
@@ -38,35 +38,35 @@ export default function LoadTable({ loads }: LoadTableProps) {
   };
 
   return (
-    <div className="glass-effect rounded-2xl overflow-hidden border border-white/10">
+    <div className="glass-card rounded-2xl overflow-hidden border border-gray-200">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-white/10">
-          <thead className="bg-white/5">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50/50">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Load ID
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Broker
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Route
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Equipment
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Miles
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Rate
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 RPM
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-gray-200 bg-white/50">
             {loads.map((load, index) => {
               // Get FIRST pickup and LAST delivery for route display
               const pickups = load.stops?.filter((s) => s.type === "pickup") || [];
@@ -90,60 +90,60 @@ export default function LoadTable({ loads }: LoadTableProps) {
               return (
                 <tr 
                   key={index} 
-                  className="hover:bg-white/5 cursor-pointer transition-all"
+                  className="hover:bg-gray-50/50 cursor-pointer transition-all"
                   onClick={() => router.push(`/load/${index}`)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">
+                    <div className="text-sm font-medium text-gray-900">
                       {load.load_id || "N/A"}
                     </div>
                     {firstPickup?.date && (
-                      <div className="text-xs text-gray-400 flex items-center mt-1">
+                      <div className="text-xs text-gray-600 flex items-center mt-1">
                         <Calendar className="w-3 h-3 mr-1" />
                         {firstPickup.date}
                       </div>
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-white">
+                    <div className="text-sm text-gray-900">
                       {load.broker_name || "N/A"}
                     </div>
                     {load.broker_email && (
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-gray-600">
                         {load.broker_email}
                       </div>
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-white flex items-start">
-                      <MapPin className="w-4 h-4 mr-1 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-gray-900 flex items-start">
+                      <MapPin className="w-4 h-4 mr-1 text-gray-600 mt-0.5 flex-shrink-0" />
                       <span>{route}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-white">
+                    <div className="text-sm text-gray-900">
                       {load.equipment_type || "N/A"}
                     </div>
                     {load.temp_min && load.temp_max && (
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-gray-600">
                         {load.temp_min}° - {load.temp_max}°
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {load.miles || "N/A"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-semibold text-green-400">
+                    <div className="text-sm font-semibold text-green-600">
                       {formatCurrency(load.rate_total || 0)}
                     </div>
                     {load.linehaul_rate > 0 && (
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-gray-600">
                         Base: {formatCurrency(load.linehaul_rate)}
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">
                     {formatRPM(load)}
                   </td>
                 </tr>

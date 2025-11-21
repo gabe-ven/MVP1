@@ -187,7 +187,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => fetchLoads(true)}
                   disabled={isLoading}
-                  className="inline-flex items-center justify-center space-x-3 px-8 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:scale-95 transition-all font-semibold shadow-xl hover:shadow-2xl disabled:opacity-50"
+                  className="inline-flex items-center justify-center space-x-3 px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 active:scale-95 transition-all font-semibold shadow-xl hover:shadow-2xl disabled:opacity-50"
                 >
                   <RefreshCw className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`} />
                   <span>{isLoading ? "Syncing..." : "Sync Gmail Now"}</span>

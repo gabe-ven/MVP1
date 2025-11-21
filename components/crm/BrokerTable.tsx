@@ -154,7 +154,7 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
                       </div>
                     )}
                     {!broker.broker_email && !broker.broker_phone && (
-                      <span className="text-xs text-gray-400">N/A</span>
+                      <span className="text-xs text-gray-500">N/A</span>
                     )}
                   </div>
                 </td>
@@ -221,7 +221,7 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
                         <span>Email</span>
                       </button>
                     ) : (
-                      <span className="text-xs text-gray-400">No Email</span>
+                      <span className="text-xs text-gray-500">No Email</span>
                     )}
                   </div>
                 </td>
