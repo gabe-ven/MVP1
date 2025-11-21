@@ -16,11 +16,18 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
       // Store the access token in the JWT token
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
+      }
+      // Store user info in token (on initial sign in)
+      // NextAuth automatically populates user.name, user.email, user.image from Google
+      if (user) {
+        token.name = user.name;
+        token.picture = user.image;
+        token.email = user.email;
       }
       return token;
     },
@@ -28,7 +35,10 @@ export const authOptions: NextAuthOptions = {
       // Pass the access token to the session
       session.accessToken = token.accessToken as string;
       if (session.user) {
-        session.user.email = token.email as string;
+        // Ensure user data is passed from token to session
+        session.user.email = (token.email as string) || session.user.email || "";
+        session.user.name = (token.name as string) || session.user.name || "";
+        session.user.image = (token.picture as string) || session.user.image || "";
       }
       return session;
     },
