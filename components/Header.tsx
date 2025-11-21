@@ -3,7 +3,7 @@
 import { useSession, signIn } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { TruckIcon } from "lucide-react";
-import GmailStatus from "./GmailStatus";
+import AccountMenu from "./AccountMenu";
 
 interface HeaderProps {
   onSyncComplete?: () => void;
@@ -81,10 +81,10 @@ export default function Header({ onSyncComplete }: HeaderProps) {
             </nav>
           )}
           
-          {/* Right Side - Gmail Status or Sign In */}
+          {/* Right Side - Account Menu or Sign In */}
           <div className="flex items-center gap-3">
             {session ? (
-              <GmailStatus onSyncComplete={onSyncComplete} />
+              <AccountMenu onSyncComplete={onSyncComplete} />
             ) : (
               <button
                 onClick={() => signIn("google")}
