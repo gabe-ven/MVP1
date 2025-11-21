@@ -32,13 +32,13 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
+        return "bg-emerald-100 text-emerald-700 border-emerald-200";
       case "inactive":
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+        return "bg-gray-100 text-gray-600 border-gray-200";
       case "prospect":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+        return "bg-blue-100 text-blue-700 border-blue-200";
       default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+        return "bg-gray-100 text-gray-600 border-gray-200";
     }
   };
 
@@ -72,7 +72,7 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
 
   return (
     <>
-      <div className="glass-effect rounded-xl border border-white/10 overflow-hidden">
+      <div className="glass-card rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full table-fixed">
           <colgroup>
@@ -87,32 +87,32 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
             <col className="w-[8%]" />
           </colgroup>
           <thead>
-            <tr className="border-b border-white/10">
-              <th className="text-left px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <tr className="border-b border-gray-200 bg-gray-50/50">
+              <th className="text-left px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Broker
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Contact
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Status
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Loads
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Total Revenue
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Avg Rate
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Avg RPM
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Last Load
               </th>
-              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="text-center px-4 py-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Action
               </th>
             </tr>
@@ -122,17 +122,17 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
               <tr
                 key={broker.id}
                 onClick={() => handleRowClick(broker.id)}
-                className={`cursor-pointer hover:bg-white/[0.02] transition-colors ${
-                  index !== brokers.length - 1 ? "border-b border-white/5" : ""
+                className={`cursor-pointer hover:bg-gray-50/50 transition-colors ${
+                  index !== brokers.length - 1 ? "border-b border-gray-100" : ""
                 }`}
               >
                 {/* Broker Name */}
                 <td className="px-4 py-4">
                   <div className="flex items-center space-x-2">
-                    <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-2 rounded-lg flex-shrink-0">
+                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2 rounded-lg flex-shrink-0">
                       <Building2 className="w-4 h-4 text-white" />
                     </div>
-                    <div className="text-sm font-semibold text-white truncate hover:text-orange-400 transition-colors">
+                    <div className="text-sm font-semibold text-gray-900 truncate hover:text-blue-600 transition-colors">
                       {broker.broker_name}
                     </div>
                   </div>
@@ -142,19 +142,19 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
                 <td className="px-4 py-4">
                   <div className="flex flex-col items-center space-y-1">
                     {broker.broker_email && (
-                      <div className="flex items-center space-x-1.5 text-xs text-gray-400">
+                      <div className="flex items-center space-x-1.5 text-xs text-gray-600">
                         <Mail className="w-3 h-3 flex-shrink-0" />
                         <span className="truncate max-w-full">{broker.broker_email}</span>
                       </div>
                     )}
                     {broker.broker_phone && (
-                      <div className="flex items-center space-x-1.5 text-xs text-gray-400">
+                      <div className="flex items-center space-x-1.5 text-xs text-gray-600">
                         <Phone className="w-3 h-3 flex-shrink-0" />
                         <span className="truncate">{broker.broker_phone}</span>
                       </div>
                     )}
                     {!broker.broker_email && !broker.broker_phone && (
-                      <span className="text-xs text-gray-500">N/A</span>
+                      <span className="text-xs text-gray-400">N/A</span>
                     )}
                   </div>
                 </td>
@@ -175,35 +175,35 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
 
                 {/* Total Loads */}
                 <td className="px-4 py-4">
-                  <div className="text-sm font-semibold text-white text-center">
+                  <div className="text-sm font-semibold text-gray-900 text-center">
                     {broker.total_loads}
                   </div>
                 </td>
 
                 {/* Total Revenue */}
                 <td className="px-4 py-4">
-                  <div className="text-sm font-semibold text-green-400 text-center truncate">
+                  <div className="text-sm font-semibold text-emerald-600 text-center truncate">
                     {formatCurrency(broker.total_revenue)}
                   </div>
                 </td>
 
                 {/* Avg Rate */}
                 <td className="px-4 py-4">
-                  <div className="text-sm font-semibold text-white text-center truncate">
+                  <div className="text-sm font-semibold text-gray-900 text-center truncate">
                     {formatCurrency(broker.avg_rate)}
                   </div>
                 </td>
 
                 {/* Avg RPM */}
                 <td className="px-4 py-4">
-                  <div className="text-sm font-semibold text-white text-center">
+                  <div className="text-sm font-semibold text-gray-900 text-center">
                     {formatRPM(broker.avg_rpm)}
                   </div>
                 </td>
 
                 {/* Last Load Date */}
                 <td className="px-4 py-4">
-                  <div className="text-sm text-gray-300 text-center whitespace-nowrap">
+                  <div className="text-sm text-gray-600 text-center whitespace-nowrap">
                     {formatDate(broker.last_load_date)}
                   </div>
                 </td>
@@ -214,14 +214,14 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
                     {broker.broker_email ? (
                       <button
                         onClick={(e) => handleSendEmail(e, broker.broker_email!, broker.broker_name)}
-                        className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600 transition-all font-medium whitespace-nowrap"
+                        className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-all font-medium whitespace-nowrap shadow-sm"
                         title={`Email ${broker.broker_name}`}
                       >
                         <Send className="w-3.5 h-3.5" />
                         <span>Email</span>
                       </button>
                     ) : (
-                      <span className="text-xs text-gray-500">No Email</span>
+                      <span className="text-xs text-gray-400">No Email</span>
                     )}
                   </div>
                 </td>

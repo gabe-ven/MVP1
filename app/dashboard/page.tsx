@@ -196,10 +196,10 @@ export default function DashboardPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <main className="min-h-screen bg-[#0a0a0f]">
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
         <Header onSyncComplete={fetchLoads} />
         <div className="custom-screen py-40 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       </main>
     );
@@ -210,24 +210,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0f]">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Header onSyncComplete={fetchLoads} />
 
       <div className="custom-screen py-12 space-y-20">
         {loads.length === 0 ? (
           <div className="min-h-[60vh] flex items-center justify-center">
             <div className="max-w-3xl mx-auto text-center space-y-6">
-              <h2 className="text-white text-3xl font-bold sm:text-5xl tracking-tight">
+              <h2 className="text-gray-900 text-3xl font-bold sm:text-5xl tracking-tight">
                 Welcome to Load Insights
               </h2>
-              <p className="text-gray-300 text-lg">
+              <p className="text-gray-600 text-lg">
                 Sync your Gmail and we'll import your recent rate confirmations to build your dashboard.
               </p>
               <div className="pt-2">
                 <button
                   onClick={() => fetchLoads(true)}
                   disabled={isLoading}
-                  className="inline-flex items-center justify-center space-x-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 active:scale-95 transition-all font-semibold shadow-2xl shadow-blue-500/30 disabled:opacity-50"
+                  className="inline-flex items-center justify-center space-x-3 px-8 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:scale-95 transition-all font-semibold shadow-xl hover:shadow-2xl disabled:opacity-50"
                 >
                   <RefreshCw className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`} />
                   <span>{isLoading ? "Syncing..." : "Sync Gmail Now"}</span>
@@ -240,10 +240,10 @@ export default function DashboardPage() {
             {/* Key Metrics */}
             <section className="space-y-6 pb-8">
               <div className="max-w-xl mx-auto text-center">
-                <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
+                <h2 className="text-gray-900 text-3xl font-bold sm:text-4xl">
                   Key Metrics
                 </h2>
-                <p className="mt-3 text-gray-300">
+                <p className="mt-3 text-gray-600">
                   Overview of your freight operations
                 </p>
               </div>
@@ -259,14 +259,14 @@ export default function DashboardPage() {
             <>
                 {/* Charts Section */}
                 <section className="space-y-6">
-                  <div className="max-w-xl mx-auto text-center">
-                    <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
-                      Analytics
-                    </h2>
-                    <p className="mt-3 text-gray-300">
-                      Performance insights and trends
-                    </p>
-                  </div>
+              <div className="max-w-xl mx-auto text-center">
+                <h2 className="text-gray-900 text-3xl font-bold sm:text-4xl">
+                  Analytics
+                </h2>
+                <p className="mt-3 text-gray-600">
+                  Performance insights and trends
+                </p>
+              </div>
                   <Charts
                     revenueByBroker={revenueByBroker}
                     rpmTrend={rpmTrend}
@@ -275,27 +275,27 @@ export default function DashboardPage() {
 
                 {/* Email Drafter Section */}
                 <section className="space-y-6">
-                  <div className="max-w-xl mx-auto text-center">
-                    <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
-                      Broker Outreach
-                    </h2>
-                    <p className="mt-3 text-gray-300">
-                      Analyze your top brokers and generate personalized emails
-                    </p>
-                  </div>
+              <div className="max-w-xl mx-auto text-center">
+                <h2 className="text-gray-900 text-3xl font-bold sm:text-4xl">
+                  Broker Outreach
+                </h2>
+                <p className="mt-3 text-gray-600">
+                  Analyze your top brokers and generate personalized emails
+                </p>
+              </div>
                   <EmailDrafter />
                 </section>
 
                 {/* Loads Table Section */}
                 <section className="space-y-6">
-                  <div className="max-w-xl mx-auto text-center">
-                    <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
-                      All Loads <span className="text-gray-300">({loads.length})</span>
-                    </h2>
-                    <p className="mt-3 text-gray-300">
-                      Complete history of your rate confirmations
-                    </p>
-                  </div>
+              <div className="max-w-xl mx-auto text-center">
+                <h2 className="text-gray-900 text-3xl font-bold sm:text-4xl">
+                  All Loads <span className="text-gray-500">({loads.length})</span>
+                </h2>
+                <p className="mt-3 text-gray-600">
+                  Complete history of your rate confirmations
+                </p>
+              </div>
                   <LoadTable loads={loads} />
                 </section>
             </>

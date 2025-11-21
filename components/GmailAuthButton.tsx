@@ -18,7 +18,7 @@ export default function GmailAuthButton() {
     <div className="flex justify-center">
       <button
         onClick={() => signIn("google")}
-        className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 active:scale-95 transition-all font-semibold shadow-2xl shadow-blue-500/50 hover:shadow-blue-500/70"
+        className="inline-flex items-center space-x-3 px-8 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:scale-95 transition-all font-semibold shadow-xl hover:shadow-2xl"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path

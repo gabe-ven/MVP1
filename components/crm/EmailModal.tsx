@@ -41,46 +41,46 @@ export default function EmailModal({ recipientEmail, recipientName, onClose }: E
 
   return (
     <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-hidden"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-hidden"
       onClick={onClose}
     >
       <div 
-        className="bg-[#0a0a0f] rounded-2xl border border-white/10 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
+        className="bg-white rounded-2xl border border-gray-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0 bg-gray-50/50">
           <div>
-            <h2 className="text-xl font-bold text-white">Send Email</h2>
-            <p className="text-sm text-gray-400 mt-1">To: {recipientName}</p>
+            <h2 className="text-xl font-bold text-gray-900">Send Email</h2>
+            <p className="text-sm text-gray-600 mt-1">To: {recipientName}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form */}
-        <div className="flex-1 overflow-y-auto p-6 min-h-0">
+        <div className="flex-1 overflow-y-auto p-6 min-h-0 bg-white">
           <div className="space-y-4">
             {/* To Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 To
               </label>
               <input
                 type="email"
                 value={recipientEmail}
                 disabled
-                className="w-full px-4 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
             {/* Subject Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Subject
               </label>
               <input
@@ -88,38 +88,38 @@ export default function EmailModal({ recipientEmail, recipientName, onClose }: E
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Enter subject..."
-                className="w-full px-4 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 transition-colors"
+                className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
               />
             </div>
 
             {/* Message Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Message
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type your message here..."
-                className="w-full h-[400px] px-4 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 transition-colors resize-none"
+                className="w-full h-[400px] px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors resize-none"
               />
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center space-x-3 p-6 border-t border-white/10 flex-shrink-0">
+        <div className="flex items-center space-x-3 p-6 border-t border-gray-200 flex-shrink-0 bg-gray-50/50">
           <button
             onClick={handleSend}
             disabled={sending || !subject.trim() || !message.trim()}
-            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2"
+            className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2 shadow-md"
           >
             <Send className={`w-4 h-4 ${sending ? "animate-pulse" : ""}`} />
             <span>{sending ? "Sending..." : "Send Email"}</span>
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2.5 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition-all border border-white/10"
+            className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all border border-gray-200 shadow-sm"
           >
             Cancel
           </button>

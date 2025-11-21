@@ -88,10 +88,10 @@ export default function CRMPage() {
 
   if (status === "loading") {
     return (
-      <main className="min-h-screen bg-[#0a0a0f]">
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
         <Header />
         <div className="custom-screen py-40 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       </main>
     );
@@ -102,64 +102,60 @@ export default function CRMPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0f]">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Header />
 
       <div className="custom-screen py-12 space-y-8">
         {/* CRM Stats */}
         <section className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-xl blur-xl animate-pulse-glow" />
-              <div className="relative">
-                <div className="flex items-center space-x-3 mb-2">
-                  <Users className="w-5 h-5 text-blue-400" />
-                  <p className="text-sm text-gray-400">Total Brokers</p>
+            <div className="glass-card rounded-xl p-6">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-3xl font-bold text-white">{allBrokers.length}</p>
+                <p className="text-sm text-gray-600 font-medium">Total Brokers</p>
               </div>
+              <p className="text-3xl font-bold text-gray-900">{allBrokers.length}</p>
             </div>
 
-            <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl blur-xl animate-pulse-glow" />
-              <div className="relative">
-                <div className="flex items-center space-x-3 mb-2">
-                  <TruckIcon className="w-5 h-5 text-green-400" />
-                  <p className="text-sm text-gray-400">Total Revenue</p>
+            <div className="glass-card rounded-xl p-6">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <TruckIcon className="w-5 h-5 text-emerald-600" />
                 </div>
-                <p className="text-3xl font-bold text-white">
-                  ${(totalRevenue / 1000).toFixed(0)}K
-                </p>
+                <p className="text-sm text-gray-600 font-medium">Total Revenue</p>
               </div>
+              <p className="text-3xl font-bold text-gray-900">
+                ${(totalRevenue / 1000).toFixed(0)}K
+              </p>
             </div>
 
-            <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-violet-500/10 rounded-xl blur-xl animate-pulse-glow" />
-              <div className="relative">
-                <div className="flex items-center space-x-3 mb-2">
-                  <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                  <p className="text-sm text-gray-400">Pending Tasks</p>
+            <div className="glass-card rounded-xl p-6">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5 text-purple-600" />
                 </div>
-                <p className="text-3xl font-bold text-white">{tasks.length}</p>
+                <p className="text-sm text-gray-600 font-medium">Pending Tasks</p>
               </div>
+              <p className="text-3xl font-bold text-gray-900">{tasks.length}</p>
             </div>
 
-            <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-rose-500/10 rounded-xl blur-xl animate-pulse-glow" />
-              <div className="relative">
-                <div className="flex items-center space-x-3 mb-2">
-                  <AlertCircle className="w-5 h-5 text-red-400" />
-                  <p className="text-sm text-gray-400">Overdue Tasks</p>
+            <div className="glass-card rounded-xl p-6">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-red-600" />
                 </div>
-                <p className="text-3xl font-bold text-white">{overdueTasks.length}</p>
+                <p className="text-sm text-gray-600 font-medium">Overdue Tasks</p>
               </div>
+              <p className="text-3xl font-bold text-gray-900">{overdueTasks.length}</p>
             </div>
           </div>
         </section>
 
         {/* Search and Filters */}
         <section className="space-y-6">
-          <div className="glass-effect rounded-xl p-6 border border-white/10">
+          <div className="glass-card rounded-xl p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="flex-1 max-w-md">
                 <div className="relative">
@@ -169,18 +165,18 @@ export default function CRMPage() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search brokers..."
-                    className="w-full pl-10 pr-4 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 transition-colors"
+                    className="w-full pl-10 pr-4 py-2 bg-white/50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
                   />
                 </div>
               </div>
 
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
-                  <Filter className="w-4 h-4 text-gray-400" />
+                  <Filter className="w-4 h-4 text-gray-500" />
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as any)}
-                    className="px-3 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500/50 transition-colors"
+                    className="px-3 py-2 bg-white/50 border border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -192,7 +188,7 @@ export default function CRMPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-3 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500/50 transition-colors"
+                  className="px-3 py-2 bg-white/50 border border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
                 >
                   <option value="revenue">Revenue</option>
                   <option value="loads">Loads</option>
@@ -202,7 +198,7 @@ export default function CRMPage() {
 
                 <button
                   onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-                  className="p-2 bg-white/[0.02] border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+                  className="p-2 bg-white/50 border border-gray-200 rounded-lg text-gray-600 hover:text-gray-900 hover:border-gray-300 transition-colors"
                   title={sortOrder === "asc" ? "Ascending" : "Descending"}
                 >
                   {sortOrder === "asc" ? "↑" : "↓"}
@@ -211,7 +207,7 @@ export default function CRMPage() {
                 <button
                   onClick={handleSyncBrokers}
                   disabled={syncingBrokers}
-                  className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-all disabled:opacity-50 font-medium"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 font-medium shadow-md"
                 >
                   <RefreshCw className={`w-4 h-4 ${syncingBrokers ? "animate-spin" : ""}`} />
                   <span>{syncingBrokers ? "Syncing..." : "Sync"}</span>
@@ -224,31 +220,31 @@ export default function CRMPage() {
         {/* Brokers Table */}
         <section className="space-y-6">
           {allBrokers.length === 0 ? (
-            <div className="glass-effect rounded-xl p-12 border border-white/10 text-center">
-              <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Brokers Yet</h3>
-              <p className="text-gray-400 mb-6">
+            <div className="glass-card rounded-xl p-12 text-center">
+              <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Brokers Yet</h3>
+              <p className="text-gray-600 mb-6">
                 Click "Sync" to import brokers from your loads
               </p>
               <button
                 onClick={handleSyncBrokers}
                 disabled={syncingBrokers}
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-50 font-medium"
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all disabled:opacity-50 font-medium"
               >
                 <RefreshCw className={`w-4 h-4 ${syncingBrokers ? "animate-spin" : ""}`} />
                 <span>{syncingBrokers ? "Syncing..." : "Sync Brokers Now"}</span>
               </button>
             </div>
           ) : filteredBrokers.length === 0 ? (
-            <div className="glass-effect rounded-xl p-12 border border-white/10 text-center">
-              <Search className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Brokers Found</h3>
-              <p className="text-gray-400 mb-6">
+            <div className="glass-card rounded-xl p-12 text-center">
+              <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Brokers Found</h3>
+              <p className="text-gray-600 mb-6">
                 No brokers match your search criteria. Try adjusting your filters.
               </p>
               <button
                 onClick={() => setSearchTerm("")}
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition-all border border-white/10"
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all border border-gray-200"
               >
                 <span>Clear Search</span>
               </button>

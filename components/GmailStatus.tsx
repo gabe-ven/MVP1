@@ -98,30 +98,30 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
     <div className="relative">
       <div className="flex items-center space-x-3">
         {/* Sync Status */}
-        <div className="flex items-center space-x-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10">
-          <Mail className="w-3.5 h-3.5 text-blue-400" />
+        <div className="flex items-center space-x-2 px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm">
+          <Mail className="w-3.5 h-3.5 text-blue-600" />
           <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-400">{session.user?.email}</span>
+            <span className="text-xs text-gray-700">{session.user?.email}</span>
             {isSyncing ? (
-              <RefreshCw className="w-3 h-3 text-blue-400 animate-spin" />
+              <RefreshCw className="w-3 h-3 text-blue-600 animate-spin" />
             ) : lastSync ? (
-              <CheckCircle className="w-3 h-3 text-green-400" />
+              <CheckCircle className="w-3 h-3 text-emerald-600" />
             ) : syncError ? (
-              <AlertCircle className="w-3 h-3 text-red-400" />
+              <AlertCircle className="w-3 h-3 text-red-600" />
             ) : null}
           </div>
         </div>
 
         {/* New Loads Badge */}
         {newLoadsCount > 0 && (
-          <div className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded-md border border-green-500/30 animate-pulse">
+          <div className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-md border border-emerald-200 animate-pulse shadow-sm">
             +{newLoadsCount} new
           </div>
         )}
 
         {/* Sync Stats Badge */}
         {syncStats && !newLoadsCount && (
-          <div className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-md border border-blue-500/30">
+          <div className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-md border border-blue-200 shadow-sm">
             {syncStats.pdfsProcessed || 0} processed, {syncStats.skipped || 0} skipped
           </div>
         )}
@@ -130,7 +130,7 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
         <button
           onClick={() => handleSync(false)}
           disabled={isSyncing}
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-white/5 text-gray-400 text-xs rounded-lg hover:bg-white/10 transition-all border border-white/10 disabled:opacity-50"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs rounded-lg hover:bg-gray-200 transition-all border border-gray-200 disabled:opacity-50 shadow-sm"
           title="Sync now"
         >
           <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
@@ -140,7 +140,7 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
         {/* Sign Out */}
         <button
           onClick={() => signOut()}
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-white/5 text-gray-400 text-xs rounded-lg hover:bg-white/10 transition-all border border-white/10"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs rounded-lg hover:bg-gray-200 transition-all border border-gray-200 shadow-sm"
           title="Sign out"
         >
           <LogOut className="w-3 h-3" />
@@ -150,20 +150,20 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
 
       {/* Error/Warning Toast */}
       {syncError && (
-        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-red-500/5 border border-red-500/20 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-red-50 border border-red-200 rounded-lg shadow-xl z-50 backdrop-blur-sm">
           <div className="flex items-start space-x-2">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-red-300">{syncError}</p>
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-red-700">{syncError}</p>
           </div>
         </div>
       )}
 
       {/* Info Message Toast */}
       {syncMessage && !syncError && (
-        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-blue-50 border border-blue-200 rounded-lg shadow-xl z-50 backdrop-blur-sm">
           <div className="flex items-start space-x-2">
-            <CheckCircle className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-blue-300">{syncMessage}</p>
+            <CheckCircle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-blue-700">{syncMessage}</p>
           </div>
         </div>
       )}

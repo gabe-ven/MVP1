@@ -52,37 +52,34 @@ export default function Metrics({
       {metrics.map((metric, idx) => {
         const Icon = metric.icon;
         const gradients = [
-          'from-orange-500 to-amber-500',
-          'from-green-500 to-emerald-500',
-          'from-violet-500 to-purple-500',
-          'from-red-500 to-rose-500'
+          'from-blue-500 to-blue-600',
+          'from-emerald-500 to-teal-600',
+          'from-purple-500 to-indigo-600',
+          'from-orange-500 to-amber-500'
         ];
-        const glows = [
-          'from-orange-500/20 to-amber-500/20',
-          'from-green-500/20 to-emerald-500/20',
-          'from-violet-500/20 to-purple-500/20',
-          'from-red-500/20 to-rose-500/20'
+        const iconBgs = [
+          'bg-blue-50',
+          'bg-emerald-50',
+          'bg-purple-50',
+          'bg-orange-50'
         ];
         return (
           <div
             key={metric.name}
-            className="relative overflow-hidden"
+            className="glass-card rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300"
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${glows[idx]} rounded-xl blur-xl animate-pulse-glow`} />
-            <div className="relative space-y-4 p-6 rounded-xl border border-gray-800/30 bg-black/40 backdrop-blur-sm text-center">
-              <div className="flex justify-center">
-                <div className={`w-12 h-12 flex items-center justify-center bg-gradient-to-br ${gradients[idx]} rounded-lg text-white shadow-lg`}>
-                  <Icon className="w-6 h-6" />
-                </div>
+            <div className="flex justify-center mb-4">
+              <div className={`w-14 h-14 flex items-center justify-center bg-gradient-to-br ${gradients[idx]} rounded-xl text-white shadow-lg`}>
+                <Icon className="w-7 h-7" />
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-300 mb-2">
-                  {metric.name}
-                </p>
-                <p className="text-3xl font-bold text-white">
-                  {metric.value}
-                </p>
-              </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-600 mb-2">
+                {metric.name}
+              </p>
+              <p className="text-3xl font-bold text-gray-900">
+                {metric.value}
+              </p>
             </div>
           </div>
         );

@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 body {
-  background: #0a0a0f;
-  color: #f3f4f6;
+  background: #f5f7fa;
+  color: #1a1a1a;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
@@ -14,9 +14,17 @@ body {
   }
 
   .glass-effect {
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   }
 
   @keyframes pulse-glow {
@@ -50,12 +58,12 @@ body {
   
   .gradient-border {
     border: 1px solid transparent;
-    background: linear-gradient(#111827, #111827) padding-box,
-                linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%) border-box;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) border-box;
   }
 
   .custom-card-bg {
-    background: radial-gradient(157.73% 157.73% at 50% -29.9%, rgba(203, 213, 225, 0.16) 0%, rgba(203, 213, 225, 0) 100%);
+    background: radial-gradient(157.73% 157.73% at 50% -29.9%, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
   }
 }
 

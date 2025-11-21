@@ -38,7 +38,7 @@ const Features = () => {
   ];
 
   return (
-    <section id="features" className="custom-screen text-gray-300 py-20">
+    <section id="features" className="custom-screen py-20">
       <LayoutEffect
         className="duration-1000 delay-300"
         isInviewState={{
@@ -47,10 +47,10 @@ const Features = () => {
         }}
       >
         <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-white text-3xl font-semibold sm:text-4xl">
+          <h2 className="text-gray-900 text-3xl font-semibold sm:text-4xl">
             Everything You Need to Manage Your Loads
           </h2>
-          <p className="mt-3 text-gray-300">
+          <p className="mt-3 text-gray-600">
             Load Insights provides powerful tools to help you analyze your freight business and make data-driven decisions.
           </p>
         </div>
@@ -66,12 +66,12 @@ const Features = () => {
           <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {featuresList.map((item, idx) => (
               <li key={idx} className="group relative">
-                <div className="relative space-y-3 p-6 rounded-xl border border-gray-800/30 bg-black/40 backdrop-blur-sm hover:border-gray-700/50 transition-all">
-                  <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg text-white shadow-lg">
+                <div className="glass-card space-y-3 p-6 rounded-xl hover:shadow-xl transition-all">
+                  <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg text-white shadow-lg">
                     {item.icon}
                   </div>
-                  <h3 className="text-lg text-white font-semibold">{item.title}</h3>
-                  <p className="text-gray-300">{item.desc}</p>
+                  <h3 className="text-lg text-gray-900 font-semibold">{item.title}</h3>
+                  <p className="text-gray-600">{item.desc}</p>
                 </div>
               </li>
             ))}

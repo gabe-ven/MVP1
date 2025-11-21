@@ -30,10 +30,10 @@ const faqsList = [
 ];
 
 const FAQs = () => (
-  <section id="faq" className="custom-screen text-gray-300 py-20">
+  <section id="faq" className="custom-screen py-20">
     <div className="max-w-xl text-center xl:mx-auto">
-      <h2 className="text-white text-3xl font-extrabold sm:text-4xl">Everything you need to know</h2>
-      <p className="mt-3 text-gray-300">Here are the most common questions about Load Insights.</p>
+      <h2 className="text-gray-900 text-3xl font-extrabold sm:text-4xl">Everything you need to know</h2>
+      <p className="mt-3 text-gray-600">Here are the most common questions about Load Insights.</p>
     </div>
     <div className="mt-12">
       <LayoutEffect
@@ -45,9 +45,9 @@ const FAQs = () => (
       >
         <ul className="space-y-8 gap-12 grid-cols-2 sm:grid sm:space-y-0 lg:grid-cols-3">
           {faqsList.map((item, idx) => (
-            <li key={idx} className="space-y-3">
-              <summary className="flex items-center justify-between font-semibold text-white">{item.q}</summary>
-              <p className="leading-relaxed text-gray-300">{item.a}</p>
+            <li key={idx} className="space-y-3 glass-card p-6 rounded-xl">
+              <summary className="flex items-center justify-between font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors">{item.q}</summary>
+              <p className="leading-relaxed text-gray-600 mt-2">{item.a}</p>
             </li>
           ))}
         </ul>
