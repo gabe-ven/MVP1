@@ -87,15 +87,15 @@ export default function EmailDrafter() {
   };
 
   return (
-    <div className="glass-effect rounded-xl p-8 border border-white/5">
+    <div className="glass-card rounded-xl p-8 border border-gray-200">
       <div className="flex items-start justify-between gap-6 mb-8">
         <div className="flex items-start space-x-4 flex-1">
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl flex-shrink-0">
+          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl flex-shrink-0">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-white mb-1.5">Top Broker Analysis</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">Identify your best broker and draft outreach emails</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1.5">Top Broker Analysis</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">Identify your best broker and draft outreach emails</p>
           </div>
         </div>
         
@@ -103,7 +103,7 @@ export default function EmailDrafter() {
           <button
             onClick={handleAnalyzeBroker}
             disabled={isLoadingBroker}
-            className="flex items-center space-x-2 px-5 py-2.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex-shrink-0"
+            className="flex items-center space-x-2 px-5 py-2.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex-shrink-0"
           >
             {isLoadingBroker ? (
               <>
@@ -121,72 +121,72 @@ export default function EmailDrafter() {
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
-          <p className="text-red-400 text-sm">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <p className="text-red-700 text-sm">{error}</p>
         </div>
       )}
 
       {brokerInfo && (
         <div className="space-y-6">
           {/* Broker Info Card */}
-          <div className="bg-white/[0.02] rounded-lg p-6 border border-white/10">
-            <h3 className="text-base font-semibold text-white mb-4 flex items-center">
-              <TrendingUp className="w-4 h-4 mr-2 text-blue-400" />
+          <div className="bg-white/50 rounded-lg p-6 border border-gray-200">
+            <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center">
+              <TrendingUp className="w-4 h-4 mr-2 text-blue-600" />
               Top Broker Details
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-gray-500 mb-1">Company</p>
-                <p className="text-base font-semibold text-white">{brokerInfo.name}</p>
+                <p className="text-xs text-gray-600 mb-1">Company</p>
+                <p className="text-base font-semibold text-gray-900">{brokerInfo.name}</p>
               </div>
               
               {brokerInfo.email && (
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Email</p>
-                  <p className="text-sm font-medium text-gray-300 break-all">{brokerInfo.email}</p>
+                  <p className="text-xs text-gray-600 mb-1">Email</p>
+                  <p className="text-sm font-medium text-gray-700 break-all">{brokerInfo.email}</p>
                 </div>
               )}
               
               <div>
-                <p className="text-xs text-gray-500 mb-1">Loads Completed</p>
-                <p className="text-base font-semibold text-white">{brokerInfo.loadCount}</p>
+                <p className="text-xs text-gray-600 mb-1">Loads Completed</p>
+                <p className="text-base font-semibold text-gray-900">{brokerInfo.loadCount}</p>
               </div>
               
               <div>
-                <p className="text-xs text-gray-500 mb-1">Avg Rate</p>
-                <p className="text-base font-semibold text-white">${brokerInfo.avgRate}</p>
+                <p className="text-xs text-gray-600 mb-1">Avg Rate</p>
+                <p className="text-base font-semibold text-gray-900">${brokerInfo.avgRate}</p>
               </div>
               
               {parseFloat(brokerInfo.avgRPM) > 0 && (
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Avg RPM</p>
-                  <p className="text-base font-semibold text-white">${brokerInfo.avgRPM}/mi</p>
+                  <p className="text-xs text-gray-600 mb-1">Avg RPM</p>
+                  <p className="text-base font-semibold text-gray-900">${brokerInfo.avgRPM}/mi</p>
                 </div>
               )}
             </div>
 
             {brokerInfo.topRoutes.length > 0 && (
-              <div className="mt-5 pt-5 border-t border-white/10">
-                <p className="text-xs text-gray-500 mb-3 flex items-center font-medium">
+              <div className="mt-5 pt-5 border-t border-gray-200">
+                <p className="text-xs text-gray-600 mb-3 flex items-center font-medium">
                   <MapPin className="w-3.5 h-3.5 mr-1.5" />
                   Common Routes
                 </p>
                 <div className="space-y-2">
                   {brokerInfo.topRoutes.map((route, idx) => (
-                    <p key={idx} className="text-sm text-gray-300">• {route}</p>
+                    <p key={idx} className="text-sm text-gray-700">• {route}</p>
                   ))}
                 </div>
               </div>
             )}
 
             {brokerInfo.topEquipment.length > 0 && (
-              <div className="mt-5 pt-5 border-t border-white/10">
-                <p className="text-xs text-gray-500 mb-3 flex items-center font-medium">
+              <div className="mt-5 pt-5 border-t border-gray-200">
+                <p className="text-xs text-gray-600 mb-3 flex items-center font-medium">
                   <Truck className="w-3.5 h-3.5 mr-1.5" />
                   Equipment Types
                 </p>
-                <p className="text-sm text-gray-300">{brokerInfo.topEquipment.join(', ')}</p>
+                <p className="text-sm text-gray-700">{brokerInfo.topEquipment.join(', ')}</p>
               </div>
             )}
           </div>
@@ -197,7 +197,7 @@ export default function EmailDrafter() {
               <button
                 onClick={handleDraftEmail}
                 disabled={isLoadingEmail}
-                className="flex items-center justify-center space-x-2 px-6 py-2.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                className="flex items-center justify-center space-x-2 px-6 py-2.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
                 {isLoadingEmail ? (
                   <>
@@ -217,17 +217,17 @@ export default function EmailDrafter() {
           {/* Email Draft */}
           {draftedEmail && (
             <>
-              <div className="bg-white/[0.02] rounded-lg p-6 border border-white/10">
+              <div className="bg-white/50 rounded-lg p-6 border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base font-semibold text-white">Drafted Email</h3>
+                  <h3 className="text-base font-semibold text-gray-900">Drafted Email</h3>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={handleCopyEmail}
-                      className="flex items-center space-x-2 px-3 py-1.5 bg-white/5 text-gray-300 text-sm rounded-lg hover:bg-white/10 transition-all border border-white/10"
+                      className="flex items-center space-x-2 px-3 py-1.5 bg-white text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-all border border-gray-200"
                     >
                       {copied ? (
                         <>
-                          <Check className="w-3.5 h-3.5 text-green-400" />
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
                           <span>Copied</span>
                         </>
                       ) : (
@@ -241,7 +241,7 @@ export default function EmailDrafter() {
                     {brokerInfo.email && (
                       <button
                         onClick={handleOpenGmail}
-                        className="flex items-center space-x-2 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
+                        className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all"
                       >
                         <Mail className="w-3.5 h-3.5" />
                         <span>Open in Gmail</span>
@@ -250,20 +250,20 @@ export default function EmailDrafter() {
                   </div>
                 </div>
                 
-                <div className="bg-black/20 rounded-lg p-5 border border-white/5">
+                <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
                   <div className="space-y-4">
-                    <div className="pb-3 border-b border-white/10">
-                      <p className="text-xs text-gray-500 mb-1">To:</p>
-                      <p className="text-sm text-white">{brokerInfo.email || 'No email available'}</p>
+                    <div className="pb-3 border-b border-gray-200">
+                      <p className="text-xs text-gray-600 mb-1">To:</p>
+                      <p className="text-sm text-gray-900">{brokerInfo.email || 'No email available'}</p>
                     </div>
                     
-                    <div className="pb-3 border-b border-white/10">
-                      <p className="text-xs text-gray-500 mb-1">Subject:</p>
-                      <p className="text-sm text-white">Load Inquiry - Available Freight</p>
+                    <div className="pb-3 border-b border-gray-200">
+                      <p className="text-xs text-gray-600 mb-1">Subject:</p>
+                      <p className="text-sm text-gray-900">Load Inquiry - Available Freight</p>
                     </div>
                     
                     <div>
-                      <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
                         {draftedEmail}
                       </p>
                     </div>
@@ -276,7 +276,7 @@ export default function EmailDrafter() {
                   setBrokerInfo(null);
                   setDraftedEmail(null);
                 }}
-                className="w-full px-4 py-2 bg-white/5 text-gray-400 text-sm rounded-lg hover:bg-white/10 transition-all border border-white/10"
+                className="w-full px-4 py-2 bg-white/50 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-all border border-gray-200"
               >
                 Analyze Another Broker
               </button>
