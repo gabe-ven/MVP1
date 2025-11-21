@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { google } from "googleapis";
 import { extractLoadData } from "@/lib/extract";
 import { addLoads, loadLoads } from "@/lib/storage";
+import { syncBrokersFromLoads } from "@/lib/crm-storage";
+
 import pdf from "pdf-parse";
 
 export const dynamic = 'force-dynamic';

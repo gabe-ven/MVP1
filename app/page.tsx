@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import LoadTable from "@/components/LoadTable";
 import Metrics from "@/components/Metrics";
 import Charts from "@/components/Charts";
@@ -12,15 +13,28 @@ import Features from "@/components/Features";
 import FAQs from "@/components/FAQs";
 import AnimatedTrucks from "@/components/AnimatedTrucks";
 import ChatBot from "@/components/ChatBot";
+import BrokerTable from "@/components/crm/BrokerTable";
 import { LoadData } from "@/lib/schema";
-import { TruckIcon, RefreshCw, Mail, Cpu, LineChart } from "lucide-react";
+import { Broker, BrokerTask } from "@/lib/crm-storage";
+import { TruckIcon, RefreshCw, Mail, Cpu, LineChart, Building2, Users, CheckCircle2, AlertCircle, Search, Filter } from "lucide-react";
 
 export default function Home() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [loads, setLoads] = useState<LoadData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [isSyncingLanding, setIsSyncingLanding] = useState(false);
+  const [activeTab, setActiveTab] = useState<"dashboard" | "crm">("dashboard");
+  
+  // CRM state
+  const [allBrokers, setAllBrokers] = useState<Broker[]>([]);
+  const [tasks, setTasks] = useState<BrokerTask[]>([]);
+  const [syncingBrokers, setSyncingBrokers] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive" | "prospect">("all");
+  const [sortBy, setSortBy] = useState<"name" | "revenue" | "loads" | "lastContact">("revenue");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Reset cached data when the user signs out
   useEffect(() => {
@@ -93,6 +107,42 @@ export default function Home() {
     }
   }, []);
 
+  // Fetch CRM data
+  const fetchCRMData = useCallback(async () => {
+    try {
+      // Fetch brokers
+      const params = new URLSearchParams();
+      if (statusFilter !== "all") params.append("status", statusFilter);
+      params.append("sortBy", sortBy);
+      params.append("sortOrder", sortOrder);
+
+      const brokersResponse = await fetch(`/api/crm/brokers?${params}`);
+      const brokersData = await brokersResponse.json();
+      setAllBrokers(brokersData.brokers || []);
+
+      // Fetch tasks
+      const tasksResponse = await fetch("/api/crm/tasks?status=pending");
+      const tasksData = await tasksResponse.json();
+      setTasks(tasksData.tasks || []);
+    } catch (error) {
+      console.error("Error fetching CRM data:", error);
+    }
+  }, [statusFilter, sortBy, sortOrder]);
+
+  const handleSyncBrokers = async () => {
+    setSyncingBrokers(true);
+    try {
+      const response = await fetch("/api/crm/sync", { method: "POST" });
+      if (response.ok) {
+        await fetchCRMData();
+      }
+    } catch (error) {
+      console.error("Error syncing brokers:", error);
+    } finally {
+      setSyncingBrokers(false);
+    }
+  };
+
   // Load existing data on mount and when returning from detail page
   useEffect(() => {
     fetchLoads();
@@ -113,6 +163,22 @@ export default function Home() {
       clearInterval(pollInterval);
     };
   }, [fetchLoads]);
+
+  // Check URL params for tab selection
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "crm" && session) {
+      setActiveTab("crm");
+    }
+  }, [searchParams, session]);
+
+  // Fetch CRM data when CRM tab is active
+  useEffect(() => {
+    if (session && activeTab === "crm") {
+      fetchCRMData();
+    }
+  }, [session, activeTab, fetchCRMData]);
 
   const handleLandingSync = useCallback(async () => {
     try {
@@ -210,6 +276,24 @@ export default function Home() {
 
   const showLanding = !session;
   const showDashboard = session;
+
+  // Filter brokers client-side for search
+  const filteredBrokers = searchTerm
+    ? allBrokers.filter((broker) => {
+        const search = searchTerm.toLowerCase();
+        return (
+          broker.broker_name.toLowerCase().includes(search) ||
+          broker.broker_email?.toLowerCase().includes(search)
+        );
+      })
+    : allBrokers;
+
+  const overdueTasks = tasks.filter(
+    (task) => task.due_date && new Date(task.due_date) < new Date()
+  );
+
+  const totalRevenue = allBrokers.reduce((sum, broker) => sum + broker.total_revenue, 0);
+  const totalBrokerLoads = allBrokers.reduce((sum, broker) => sum + broker.total_loads, 0);
 
   return (
     <main className="min-h-screen bg-[#0a0a0f]">
@@ -414,7 +498,7 @@ export default function Home() {
                     Welcome to Load Insights
                   </h2>
                   <p className="text-gray-300 text-lg">
-                    Sync your Gmail and we’ll import your recent rate confirmations to build your dashboard.
+                    Sync your Gmail and we'll import your recent rate confirmations to build your dashboard.
                   </p>
                   <div className="pt-2">
                     <button
@@ -436,7 +520,7 @@ export default function Home() {
                           <Mail className="w-10 h-10 text-blue-400" />
                         </div>
                         <p className="text-gray-300 text-sm leading-relaxed">
-                          We’ll scan your Gmail for rate confirmation PDFs from the last 30 days
+                          We'll scan your Gmail for rate confirmation PDFs from the last 30 days
                         </p>
                       </div>
                       <div className="flex items-start space-x-3 text-left">
@@ -478,8 +562,40 @@ export default function Home() {
                   />
                 </section>
 
-            {/* Charts Section */}
-            <section className="space-y-6">
+                {/* Tabs Navigation */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-center space-x-2 border-b border-gray-800/30 pb-2">
+                    <button
+                      onClick={() => setActiveTab("dashboard")}
+                      className={`px-6 py-3 rounded-t-lg text-sm font-medium transition-all ${
+                        activeTab === "dashboard"
+                          ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
+                          : "text-gray-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <LineChart className="w-4 h-4 inline-block mr-2" />
+                      Dashboard
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("crm")}
+                      className={`px-6 py-3 rounded-t-lg text-sm font-medium transition-all ${
+                        activeTab === "crm"
+                          ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
+                          : "text-gray-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <Building2 className="w-4 h-4 inline-block mr-2" />
+                      CRM
+                    </button>
+                  </div>
+                </section>
+
+                {/* Dashboard Tab Content */}
+                {activeTab === "dashboard" && (
+                  <>
+
+                {/* Charts Section */}
+                <section className="space-y-6">
               <div className="max-w-xl mx-auto text-center">
                 <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
                   Analytics
@@ -494,8 +610,8 @@ export default function Home() {
               />
             </section>
 
-            {/* Email Drafter Section */}
-            <section className="space-y-6">
+                {/* Email Drafter Section */}
+                <section className="space-y-6">
               <div className="max-w-xl mx-auto text-center">
                 <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
                   Broker Outreach
@@ -507,8 +623,8 @@ export default function Home() {
               <EmailDrafter />
             </section>
 
-            {/* Loads Table Section */}
-            <section className="space-y-6">
+                {/* Loads Table Section */}
+                <section className="space-y-6">
               <div className="max-w-xl mx-auto text-center">
                 <h2 className="text-white text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-amber-400">
                   All Loads <span className="text-gray-300">({loads.length})</span>
@@ -517,8 +633,169 @@ export default function Home() {
                   Complete history of your rate confirmations
                 </p>
               </div>
-              <LoadTable loads={loads} />
-            </section>
+                  <LoadTable loads={loads} />
+                </section>
+                  </>
+                )}
+
+                {/* CRM Tab Content */}
+                {activeTab === "crm" && (
+                  <>
+                    {/* CRM Stats */}
+                    <section className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <Users className="w-5 h-5 text-blue-400" />
+                              <p className="text-sm text-gray-400">Total Brokers</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{allBrokers.length}</p>
+                          </div>
+                        </div>
+
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <TruckIcon className="w-5 h-5 text-green-400" />
+                              <p className="text-sm text-gray-400">Total Revenue</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">
+                              ${(totalRevenue / 1000).toFixed(0)}K
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-violet-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <CheckCircle2 className="w-5 h-5 text-purple-400" />
+                              <p className="text-sm text-gray-400">Pending Tasks</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{tasks.length}</p>
+                          </div>
+                        </div>
+
+                        <div className="relative overflow-hidden glass-effect rounded-xl p-6 border border-white/10">
+                          <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-rose-500/10 rounded-xl blur-xl animate-pulse-glow" />
+                          <div className="relative">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <AlertCircle className="w-5 h-5 text-red-400" />
+                              <p className="text-sm text-gray-400">Overdue Tasks</p>
+                            </div>
+                            <p className="text-3xl font-bold text-white">{overdueTasks.length}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* Filters and Search */}
+                    <section className="space-y-6">
+                      <div className="glass-effect rounded-xl p-6 border border-white/10">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                          {/* Search */}
+                          <div className="flex-1 max-w-md">
+                            <div className="relative">
+                              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                              <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search brokers..."
+                                className="w-full pl-10 pr-4 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 transition-colors"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Filters */}
+                          <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-2">
+                              <Filter className="w-4 h-4 text-gray-400" />
+                              <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value as any)}
+                                className="px-3 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500/50 transition-colors"
+                              >
+                                <option value="all">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="prospect">Prospect</option>
+                              </select>
+                            </div>
+
+                            <select
+                              value={sortBy}
+                              onChange={(e) => setSortBy(e.target.value as any)}
+                              className="px-3 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500/50 transition-colors"
+                            >
+                              <option value="revenue">Revenue</option>
+                              <option value="loads">Loads</option>
+                              <option value="name">Name</option>
+                              <option value="lastContact">Last Contact</option>
+                            </select>
+
+                            <button
+                              onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                              className="p-2 bg-white/[0.02] border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+                              title={sortOrder === "asc" ? "Ascending" : "Descending"}
+                            >
+                              {sortOrder === "asc" ? "↑" : "↓"}
+                            </button>
+
+                            <button
+                              onClick={handleSyncBrokers}
+                              disabled={syncingBrokers}
+                              className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-all disabled:opacity-50 font-medium"
+                            >
+                              <RefreshCw className={`w-4 h-4 ${syncingBrokers ? "animate-spin" : ""}`} />
+                              <span>{syncingBrokers ? "Syncing..." : "Sync"}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* Brokers Grid */}
+                    <section className="space-y-6">
+                      {allBrokers.length === 0 ? (
+                        <div className="glass-effect rounded-xl p-12 border border-white/10 text-center">
+                          <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                          <h3 className="text-xl font-semibold text-white mb-2">No Brokers Yet</h3>
+                          <p className="text-gray-400 mb-6">
+                            Click "Sync" to import brokers from your loads
+                          </p>
+                          <button
+                            onClick={handleSyncBrokers}
+                            disabled={syncingBrokers}
+                            className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-50 font-medium"
+                          >
+                            <RefreshCw className={`w-4 h-4 ${syncingBrokers ? "animate-spin" : ""}`} />
+                            <span>{syncingBrokers ? "Syncing..." : "Sync Brokers Now"}</span>
+                          </button>
+                        </div>
+                      ) : filteredBrokers.length === 0 ? (
+                        <div className="glass-effect rounded-xl p-12 border border-white/10 text-center">
+                          <Search className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                          <h3 className="text-xl font-semibold text-white mb-2">No Brokers Found</h3>
+                          <p className="text-gray-400 mb-6">
+                            No brokers match your search criteria. Try adjusting your filters.
+                          </p>
+                          <button
+                            onClick={() => setSearchTerm("")}
+                            className="inline-flex items-center space-x-2 px-6 py-3 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition-all border border-white/10"
+                          >
+                            <span>Clear Search</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <BrokerTable brokers={filteredBrokers} />
+                      )}
+                    </section>
+                  </>
+                )}
               </>
             )}
           </div>
