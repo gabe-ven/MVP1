@@ -66,10 +66,10 @@ export default function Metrics({
         return (
           <div
             key={metric.name}
-            className="relative group"
+            className="relative overflow-hidden"
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${glows[idx]} rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-            <div className="relative space-y-4 p-6 rounded-xl border border-gray-800/30 bg-black/40 backdrop-blur-sm text-center hover:border-gray-700/50 transition-all">
+            <div className={`absolute inset-0 bg-gradient-to-br ${glows[idx]} rounded-xl blur-xl animate-pulse-glow`} />
+            <div className="relative space-y-4 p-6 rounded-xl border border-gray-800/30 bg-black/40 backdrop-blur-sm text-center">
               <div className="flex justify-center">
                 <div className={`w-12 h-12 flex items-center justify-center bg-gradient-to-br ${gradients[idx]} rounded-lg text-white shadow-lg`}>
                   <Icon className="w-6 h-6" />

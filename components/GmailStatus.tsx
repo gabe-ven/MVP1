@@ -157,7 +157,7 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
 
       {/* Error/Warning Toast */}
       {syncError && (
-        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-red-500/10 border border-red-500/30 rounded-lg shadow-lg z-50">
+        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-red-500/5 border border-red-500/20 rounded-lg shadow-lg z-50 backdrop-blur-sm">
           <div className="flex items-start space-x-2">
             <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-red-300">{syncError}</p>
@@ -167,7 +167,7 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
 
       {/* Info Message Toast */}
       {syncMessage && !syncError && (
-        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg shadow-lg z-50">
+        <div className="absolute top-full mt-2 right-0 max-w-md p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg shadow-lg z-50 backdrop-blur-sm">
           <div className="flex items-start space-x-2">
             <CheckCircle className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-blue-300">{syncMessage}</p>

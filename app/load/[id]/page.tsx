@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoadData } from "@/lib/schema";
-import { ArrowLeft, DollarSign, Info, Truck, Mail, Phone, Package, Thermometer, FileText, MapPin, Calendar, Building2, Hash } from "lucide-react";
+import { ArrowLeft, DollarSign, Info, Truck, Mail, Phone, Package, Thermometer, FileText, MapPin, Calendar, Building2, Hash, ExternalLink } from "lucide-react";
 
 export default function LoadDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [load, setLoad] = useState<LoadData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [brokerId, setBrokerId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchLoad() {
@@ -19,6 +20,22 @@ export default function LoadDetailPage({ params }: { params: { id: string } }) {
           l.load_id === params.id || index.toString() === params.id
         );
         setLoad(foundLoad || null);
+        
+        // Try to fetch broker ID if broker email exists
+        if (foundLoad?.broker_email) {
+          try {
+            const brokersResponse = await fetch("/api/crm/brokers");
+            const brokersData = await brokersResponse.json();
+            const broker = brokersData.brokers?.find(
+              (b: any) => b.broker_email?.toLowerCase() === foundLoad.broker_email?.toLowerCase()
+            );
+            if (broker) {
+              setBrokerId(broker.id);
+            }
+          } catch (error) {
+            console.error("Error fetching broker:", error);
+          }
+        }
       } catch (error) {
         console.error("Error fetching load:", error);
       } finally {
@@ -149,10 +166,21 @@ export default function LoadDetailPage({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Broker Information */}
           <section className="bg-black/40 backdrop-blur-sm rounded-xl p-6 border border-gray-800/30">
-            <h3 className="text-base font-semibold text-white mb-4 flex items-center">
-              <Building2 className="w-4 h-4 mr-2 text-amber-400" />
-              Broker Information
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-white flex items-center">
+                <Building2 className="w-4 h-4 mr-2 text-amber-400" />
+                Broker Information
+              </h3>
+              {brokerId && (
+                <button
+                  onClick={() => router.push(`/crm/brokers/${brokerId}`)}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-orange-500/20 text-orange-400 text-xs rounded-lg hover:bg-orange-500/30 transition-all border border-orange-500/30"
+                >
+                  <span>View in CRM</span>
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
             <div className="space-y-3">
               <div className="flex items-start">
                 <Building2 className="w-3.5 h-3.5 mr-2 text-amber-400 mt-1 flex-shrink-0" />
