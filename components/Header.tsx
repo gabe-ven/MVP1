@@ -1,8 +1,7 @@
 "use client";
 
 import { useSession, signIn } from "next-auth/react";
-import { useRouter, usePathname } from "next/navigation";
-import { TruckIcon } from "lucide-react";
+import { Bell, RefreshCw } from "lucide-react";
 import AccountMenu from "./AccountMenu";
 
 interface HeaderProps {
@@ -11,89 +10,47 @@ interface HeaderProps {
 
 export default function Header({ onSyncComplete }: HeaderProps) {
   const { data: session } = useSession();
-  const router = useRouter();
-  const pathname = usePathname();
-  const isLandingPage = pathname === "/";
 
   return (
-    <header className="border-b border-gray-200/80 sticky top-0 z-40 backdrop-blur-xl bg-white/80">
-      <div className="custom-screen py-4">
-        <div className="flex items-center justify-between gap-4">
-          {/* Logo - Left */}
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
-          >
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
-              <TruckIcon className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-left">
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight text-left">
-                Noctem
-              </h1>
-              <p className="text-xs text-gray-500 text-left">
-                AI-Powered Rate Analysis
-              </p>
-            </div>
+    <header className="h-18 border-b border-neutral-200 bg-white sticky top-0 z-40 shadow-sm">
+      <div className="h-full px-8 flex items-center justify-between">
+        {/* Center - App Title */}
+        <div className="flex-1">
+          <h2 className="text-base font-semibold text-gray-900">
+            Noctem AI Dispatch OS
+          </h2>
+        </div>
+
+        {/* Right - Actions */}
+        <div className="flex items-center gap-4">
+          {/* Notifications */}
+          <button className="relative p-2.5 hover:bg-neutral-50 rounded-xl transition-colors">
+            <Bell className="w-5 h-5 text-neutral-600" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
           </button>
 
-          {/* Navigation Links - Center (only show on landing page) */}
-          {isLandingPage && (
-            <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2">
-              <a
-                href="#features"
-                className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
-              >
-                Features
-              </a>
-              <a
-                href="#faq"
-                className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
-              >
-                FAQ
-              </a>
-            </nav>
+          {/* Sync Gmail Button */}
+          {session && (
+            <button
+              onClick={() => onSyncComplete?.()}
+              className="flex items-center gap-2 px-6 py-2.5 btn-gradient-primary text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all duration-200"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Sync Gmail</span>
+            </button>
           )}
 
-          {/* Dashboard Navigation (show when authenticated and not on landing) */}
-          {session && !isLandingPage && (
-            <nav className="hidden md:flex items-center gap-6 absolute left-1/2 transform -translate-x-1/2">
-              <button
-                onClick={() => router.push("/dashboard")}
-                className={`text-sm font-medium transition-colors ${
-                  pathname === "/dashboard"
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-blue-600"
-                }`}
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => router.push("/crm")}
-                className={`text-sm font-medium transition-colors ${
-                  pathname?.startsWith("/crm")
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-blue-600"
-                }`}
-              >
-                CRM
-              </button>
-            </nav>
+          {/* Account Menu */}
+          {session ? (
+            <AccountMenu onSyncComplete={onSyncComplete} />
+          ) : (
+            <button
+              onClick={() => signIn("google")}
+              className="px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-sm"
+            >
+              Sign In
+            </button>
           )}
-          
-          {/* Right Side - Account Menu or Sign In */}
-          <div className="flex items-center gap-3">
-            {session ? (
-              <AccountMenu onSyncComplete={onSyncComplete} />
-            ) : (
-              <button
-                onClick={() => signIn("google")}
-                className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 hover:shadow-lg transition-all"
-              >
-                Sign In
-              </button>
-            )}
-          </div>
         </div>
       </div>
     </header>

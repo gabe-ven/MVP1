@@ -15,7 +15,22 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  pages: {
+    signIn: "/",
+  },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // After sign-in, redirect to AI Hub
+      if (url.startsWith("/")) {
+        return url === "/" ? `${baseUrl}/ai-hub` : url;
+      }
+      // If callback URL is on same domain, use it
+      else if (new URL(url).origin === baseUrl) {
+        return url;
+      }
+      // Otherwise, redirect to AI Hub
+      return `${baseUrl}/ai-hub`;
+    },
     async jwt({ token, account, user }) {
       // Store the access token in the JWT token
       if (account) {

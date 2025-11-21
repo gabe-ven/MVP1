@@ -2,7 +2,7 @@
 
 A sleek, modern Next.js web app with a dark theme that uses AI to extract structured data from rate confirmation PDFs and display beautiful analytics. **Now with Gmail OAuth integration** - sign in with Google and manually sync to import rate confirmations from your Gmail!
 
-## 🚀 Quick Start
+## 🚀 Quick Starter
 
 ### 1. Install Dependencies
 ```bash
