@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
 import LoadTable from "@/components/LoadTable";
 import Metrics from "@/components/Metrics";
 import Charts from "@/components/Charts";
@@ -20,7 +19,6 @@ import { TruckIcon, RefreshCw, Mail, Cpu, LineChart, Building2, Users, CheckCirc
 
 export default function Home() {
   const { data: session } = useSession();
-  const router = useRouter();
   const [loads, setLoads] = useState<LoadData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
@@ -163,15 +161,6 @@ export default function Home() {
       clearInterval(pollInterval);
     };
   }, [fetchLoads]);
-
-  // Check URL params for tab selection
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    const tabParam = searchParams.get("tab");
-    if (tabParam === "crm" && session) {
-      setActiveTab("crm");
-    }
-  }, [searchParams, session]);
 
   // Fetch CRM data when CRM tab is active
   useEffect(() => {
