@@ -17,27 +17,35 @@ export default function AIAssistant() {
   const presetPrompts = [
     {
       id: "revenue",
-      label: "Revenue Analysis",
+      title: "Revenue Analysis",
+      description: "Analyze my revenue trends and provide insights on my most profitable loads.",
       prompt: "Analyze my revenue trends and provide insights on my most profitable loads.",
       icon: TrendingUp,
+      gradient: "from-blue-500 to-blue-600",
     },
     {
       id: "brokers",
-      label: "Top Brokers",
+      title: "Top Brokers",
+      description: "Who are my top performing brokers and what are their key metrics?",
       prompt: "Who are my top performing brokers and what are their key metrics?",
       icon: BarChart3,
+      gradient: "from-emerald-500 to-teal-600",
     },
     {
       id: "rpm",
-      label: "RPM Insights",
+      title: "RPM Insights",
+      description: "What are my RPM trends and which routes have the best rates per mile?",
       prompt: "What are my RPM trends and which routes have the best rates per mile?",
       icon: TrendingUp,
+      gradient: "from-purple-500 to-indigo-600",
     },
     {
       id: "help",
-      label: "General Help",
+      title: "General Help",
+      description: "Help me understand how to use Load Insights effectively.",
       prompt: "Help me understand how to use Load Insights effectively.",
       icon: HelpCircle,
+      gradient: "from-orange-500 to-amber-600",
     },
   ];
 
@@ -136,36 +144,7 @@ export default function AIAssistant() {
         </div>
       </div>
 
-      {/* Preset Prompt Buttons */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {presetPrompts.map((preset) => {
-          const Icon = preset.icon;
-          const isActive = activePrompt === preset.id && isLoading;
-          return (
-            <button
-              key={preset.id}
-              onClick={() => handlePresetClick(preset.prompt, preset.id)}
-              disabled={isLoading}
-              className={`flex flex-col items-center space-y-2 p-4 rounded-xl border-2 transition-all ${
-                isActive
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50"
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {isActive ? (
-                <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
-              ) : (
-                <Icon className="w-5 h-5 text-gray-700" />
-              )}
-              <span className={`text-xs font-medium ${isActive ? "text-blue-600" : "text-gray-700"}`}>
-                {preset.label}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Messages Display */}
+      {/* Messages Display - Hidden by default, shown when messages exist */}
       {messages.length > 0 && (
         <div className="space-y-4 max-h-[400px] overflow-y-auto border-t border-gray-200 pt-4">
           {messages.map((message, idx) => (
@@ -212,6 +191,37 @@ export default function AIAssistant() {
           )}
         </div>
       )}
+
+      {/* Preset Prompt Buttons - Horizontal Stack */}
+      <div className="flex flex-wrap gap-3 border-t border-gray-200 pt-4">
+        {presetPrompts.map((preset) => {
+          const Icon = preset.icon;
+          const isActive = activePrompt === preset.id && isLoading;
+          return (
+            <button
+              key={preset.id}
+              onClick={() => handlePresetClick(preset.prompt, preset.id)}
+              disabled={isLoading}
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg border-2 transition-all ${
+                isActive
+                  ? "border-blue-500 bg-blue-50 shadow-md"
+                  : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              <div className={`w-8 h-8 bg-gradient-to-br ${preset.gradient} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                {isActive ? (
+                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+                ) : (
+                  <Icon className="w-4 h-4 text-white" />
+                )}
+              </div>
+              <span className={`text-sm font-medium ${isActive ? "text-blue-700" : "text-gray-700"}`}>
+                {preset.title}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
       {/* Custom Input Field */}
       <div className="flex items-center space-x-3 border-t border-gray-200 pt-4">
