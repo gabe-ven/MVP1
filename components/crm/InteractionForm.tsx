@@ -65,7 +65,7 @@ export default function InteractionForm({ brokerId, onClose, onSuccess }: Intera
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="glass-effect rounded-2xl border border-white/10 max-w-lg w-full p-6">
+      <div className="bg-[#0a0a0f] rounded-2xl border border-white/10 max-w-lg w-full p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white">Log Interaction</h2>
