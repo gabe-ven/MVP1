@@ -1,12 +1,17 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import GmailAuthButton from "@/components/GmailAuthButton";
 import Features from "@/components/Features";
 import FAQs from "@/components/FAQs";
 import AnimatedTrucks from "@/components/AnimatedTrucks";
+import { ArrowRight } from "lucide-react";
 
 export default function LandingPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <main className="min-h-screen bg-[#0a0a0f]">
@@ -102,9 +107,21 @@ export default function LandingPage() {
             </p>
           </div>
           
-          {/* Gmail Sign In Section */}
+          {/* CTA Section */}
           <div className="mt-12">
-            <GmailAuthButton />
+            {session ? (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl hover:from-orange-600 hover:to-amber-600 active:scale-95 transition-all font-semibold shadow-2xl shadow-orange-500/50 hover:shadow-orange-500/70"
+                >
+                  <span>Go to Dashboard</span>
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            ) : (
+              <GmailAuthButton />
+            )}
           </div>
           
           {/* Hero Image with Glow Effect */}
