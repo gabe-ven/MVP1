@@ -17,6 +17,13 @@ export default function GmailStatus({ onSyncComplete }: GmailStatusProps) {
   const [newLoadsCount, setNewLoadsCount] = useState(0);
   const [syncStats, setSyncStats] = useState<any>(null);
 
+  // Check for token refresh errors
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      setSyncError("Your session has expired. Please sign out and sign in again.");
+    }
+  }, [session]);
+
   // DISABLED: Auto-sync on mount if signed in
   // useEffect(() => {
   //   if (session) {
