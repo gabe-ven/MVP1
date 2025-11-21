@@ -4,8 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import LoadTable from "@/components/LoadTable";
-import Metrics from "@/components/Metrics";
 import Charts from "@/components/Charts";
+import AIAssistant from "@/components/AIAssistant";
 import EmailDrafter from "@/components/EmailDrafter";
 import Header from "@/components/Header";
 import ChatBot from "@/components/ChatBot";
@@ -114,45 +114,6 @@ export default function DashboardPage() {
   }, [fetchLoads, session]);
 
 
-  // Calculate metrics
-  const calculateMetrics = () => {
-    if (loads.length === 0) {
-      return {
-        totalLoads: 0,
-        totalRevenue: 0,
-        averageRate: 0,
-        averageRPM: 0,
-      };
-    }
-
-    const totalRevenue = loads.reduce(
-      (sum, load) => sum + (load.rate_total || 0),
-      0
-    );
-    const averageRate = totalRevenue / loads.length;
-
-    const loadsWithMiles = loads.filter((load) => {
-      const miles = parseFloat(load.miles?.replace(/[^0-9.]/g, "") || "0");
-      return miles > 0;
-    });
-
-    let averageRPM = 0;
-    if (loadsWithMiles.length > 0) {
-      const totalRPM = loadsWithMiles.reduce((sum, load) => {
-        const miles = parseFloat(load.miles?.replace(/[^0-9.]/g, "") || "0");
-        return sum + load.rate_total / miles;
-      }, 0);
-      averageRPM = totalRPM / loadsWithMiles.length;
-    }
-
-    return {
-      totalLoads: loads.length,
-      totalRevenue,
-      averageRate,
-      averageRPM,
-    };
-  };
-
   // Get revenue by broker
   const getRevenueByBroker = () => {
     const brokerMap = new Map<string, number>();
@@ -190,7 +151,6 @@ export default function DashboardPage() {
       });
   };
 
-  const metrics = calculateMetrics();
   const revenueByBroker = getRevenueByBroker();
   const rpmTrend = getRPMTrend();
 
@@ -237,22 +197,17 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            {/* Key Metrics */}
+            {/* AI Assistant */}
             <section className="space-y-6 pb-8">
               <div className="max-w-xl mx-auto text-center">
                 <h2 className="text-gray-900 text-3xl font-bold sm:text-4xl">
-                  Key Metrics
+                  AI Assistant
                 </h2>
                 <p className="mt-3 text-gray-600">
-                  Overview of your freight operations
+                  Get instant insights about your freight data
                 </p>
               </div>
-              <Metrics
-                totalLoads={metrics.totalLoads}
-                totalRevenue={metrics.totalRevenue}
-                averageRate={metrics.averageRate}
-                averageRPM={metrics.averageRPM}
-              />
+              <AIAssistant />
             </section>
 
             {/* Dashboard Content */}
