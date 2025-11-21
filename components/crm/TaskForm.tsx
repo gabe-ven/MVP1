@@ -69,8 +69,14 @@ export default function TaskForm({ brokerId, brokerName, onClose, onSuccess }: T
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-[#0a0a0f] rounded-2xl border border-white/10 max-w-lg w-full p-6">
+    <div 
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[#0a0a0f] rounded-2xl border border-white/10 max-w-lg w-full p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
