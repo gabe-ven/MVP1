@@ -148,7 +148,7 @@ export default function GmailAuth() {
         </button>
 
         {syncError && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+          <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3 backdrop-blur-sm">
             <div className="flex items-start space-x-2">
               <XCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-red-400">{syncError}</p>
