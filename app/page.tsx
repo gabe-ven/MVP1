@@ -12,7 +12,7 @@ import GmailStatus from "@/components/GmailStatus";
 import Features from "@/components/Features";
 import FAQs from "@/components/FAQs";
 import AnimatedTrucks from "@/components/AnimatedTrucks";
-import BrokerCard from "@/components/crm/BrokerCard";
+import BrokerTable from "@/components/crm/BrokerTable";
 import { LoadData } from "@/lib/schema";
 import { Broker, BrokerTask } from "@/lib/crm-storage";
 import { TruckIcon, RefreshCw, Mail, Cpu, LineChart, Building2, Users, CheckCircle2, AlertCircle, Search, Filter } from "lucide-react";
@@ -790,11 +790,7 @@ export default function Home() {
                           </button>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                          {filteredBrokers.map((broker) => (
-                            <BrokerCard key={broker.id} broker={broker} />
-                          ))}
-                        </div>
+                        <BrokerTable brokers={filteredBrokers} />
                       )}
                     </section>
                   </>
