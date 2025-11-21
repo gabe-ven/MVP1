@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Broker } from "@/lib/crm-storage";
 import { Building2, Mail, Phone, Circle, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
+import EmailModal from "./EmailModal";
 
 interface BrokerTableProps {
   brokers: Broker[];
@@ -10,6 +12,8 @@ interface BrokerTableProps {
 
 export default function BrokerTable({ brokers }: BrokerTableProps) {
   const router = useRouter();
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [selectedBroker, setSelectedBroker] = useState<{ email: string; name: string } | null>(null);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -53,21 +57,24 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
 
   const handleSendEmail = (e: React.MouseEvent, brokerEmail: string, brokerName: string) => {
     e.stopPropagation(); // Prevent row click navigation
-    const subject = encodeURIComponent("Load Inquiry");
-    window.open(
-      `https://mail.google.com/mail/?view=cm&fs=1&to=${brokerEmail}&su=${subject}`,
-      "_blank"
-    );
+    setSelectedBroker({ email: brokerEmail, name: brokerName });
+    setEmailModalOpen(true);
   };
 
   const handleRowClick = (brokerId: string) => {
     router.push(`/crm/brokers/${brokerId}`);
   };
 
+  const closeEmailModal = () => {
+    setEmailModalOpen(false);
+    setSelectedBroker(null);
+  };
+
   return (
-    <div className="glass-effect rounded-xl border border-white/10 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full table-fixed">
+    <>
+      <div className="glass-effect rounded-xl border border-white/10 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full table-fixed">
           <colgroup>
             <col className="w-[15%]" />
             <col className="w-[15%]" />
@@ -224,6 +231,16 @@ export default function BrokerTable({ brokers }: BrokerTableProps) {
         </table>
       </div>
     </div>
+
+    {/* Email Modal - Outside table container for full screen positioning */}
+    {emailModalOpen && selectedBroker && (
+      <EmailModal
+        recipientEmail={selectedBroker.email}
+        recipientName={selectedBroker.name}
+        onClose={closeEmailModal}
+      />
+    )}
+    </>
   );
 }
 
