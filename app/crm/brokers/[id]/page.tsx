@@ -36,7 +36,7 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/");
+      router.push("/crm");
     }
   }, [status, router]);
 
@@ -146,38 +146,38 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-      </div>
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </main>
     );
   }
 
   if (!broker) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Broker Not Found</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Broker Not Found</h2>
           <button
-            onClick={() => router.push("/?tab=crm")}
-            className="text-orange-400 hover:text-orange-300"
+            onClick={() => router.push("/crm")}
+            className="text-blue-600 hover:text-blue-700"
           >
             ← Back to CRM
           </button>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Header */}
-      <header className="border-b border-gray-800/30 sticky top-0 z-40 backdrop-blur-xl bg-[#0a0a0f]/90">
+      <header className="border-b border-gray-200 sticky top-0 z-40 backdrop-blur-xl bg-white/90">
         <div className="custom-screen py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => router.push("/?tab=crm")}
-                className="text-gray-400 hover:text-white transition-colors"
+                onClick={() => router.push("/crm")}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 ← Back to CRM
               </button>
@@ -188,23 +188,23 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
 
       <div className="custom-screen py-12 space-y-8">
         {/* Broker Info Card */}
-        <div className="glass-effect rounded-2xl p-8 border border-white/10">
+        <div className="glass-card rounded-2xl p-8 border border-gray-200">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-start space-x-4">
-              <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-3 rounded-xl">
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl">
                 <Building2 className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">{broker.broker_name}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{broker.broker_name}</h1>
                 <div className="space-y-1">
                   {broker.broker_email && (
-                    <div className="flex items-center space-x-2 text-gray-300">
+                    <div className="flex items-center space-x-2 text-gray-600">
                       <Mail className="w-4 h-4" />
                       <span>{broker.broker_email}</span>
                     </div>
                   )}
                   {broker.broker_phone && (
-                    <div className="flex items-center space-x-2 text-gray-300">
+                    <div className="flex items-center space-x-2 text-gray-600">
                       <Phone className="w-4 h-4" />
                       <span>{broker.broker_phone}</span>
                     </div>
@@ -216,14 +216,14 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowInteractionForm(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Log Interaction</span>
               </button>
               <button
                 onClick={() => setShowTaskForm(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-all"
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Task</span>
@@ -231,7 +231,7 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
               {broker.broker_email && (
                 <button
                   onClick={handleSendEmail}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white/5 text-gray-300 text-sm rounded-lg hover:bg-white/10 transition-all border border-white/10"
+                  className="flex items-center space-x-2 px-4 py-2 bg-white/50 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-all border border-gray-200"
                 >
                   <Mail className="w-4 h-4" />
                   <span>Email</span>
@@ -242,49 +242,49 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white/[0.02] rounded-lg p-4 border border-white/5">
+            <div className="bg-white/50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-2 mb-2">
-                <Truck className="w-4 h-4 text-blue-400" />
-                <p className="text-xs text-gray-400">Total Loads</p>
+                <Truck className="w-4 h-4 text-blue-600" />
+                <p className="text-xs text-gray-600">Total Loads</p>
               </div>
-              <p className="text-2xl font-bold text-white">{broker.total_loads}</p>
+              <p className="text-2xl font-bold text-gray-900">{broker.total_loads}</p>
             </div>
 
-            <div className="bg-white/[0.02] rounded-lg p-4 border border-white/5">
+            <div className="bg-white/50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-2 mb-2">
-                <DollarSign className="w-4 h-4 text-green-400" />
-                <p className="text-xs text-gray-400">Total Revenue</p>
+                <DollarSign className="w-4 h-4 text-emerald-600" />
+                <p className="text-xs text-gray-600">Total Revenue</p>
               </div>
-              <p className="text-2xl font-bold text-white">{formatCurrency(broker.total_revenue)}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(broker.total_revenue)}</p>
             </div>
 
-            <div className="bg-white/[0.02] rounded-lg p-4 border border-white/5">
+            <div className="bg-white/50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-2 mb-2">
-                <DollarSign className="w-4 h-4 text-amber-400" />
-                <p className="text-xs text-gray-400">Avg Rate</p>
+                <DollarSign className="w-4 h-4 text-blue-600" />
+                <p className="text-xs text-gray-600">Avg Rate</p>
               </div>
-              <p className="text-2xl font-bold text-white">{formatCurrency(broker.avg_rate)}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(broker.avg_rate)}</p>
             </div>
 
-            <div className="bg-white/[0.02] rounded-lg p-4 border border-white/5">
+            <div className="bg-white/50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-purple-400" />
-                <p className="text-xs text-gray-400">Avg RPM</p>
+                <TrendingUp className="w-4 h-4 text-purple-600" />
+                <p className="text-xs text-gray-600">Avg RPM</p>
               </div>
-              <p className="text-2xl font-bold text-white">{formatRPM(broker.avg_rpm)}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatRPM(broker.avg_rpm)}</p>
             </div>
           </div>
 
           {/* Notes */}
-          <div className="pt-6 border-t border-white/10">
+          <div className="pt-6 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">
                 Notes
               </h3>
               {!editingNotes ? (
                 <button
                   onClick={() => setEditingNotes(true)}
-                  className="text-orange-400 hover:text-orange-300 text-sm flex items-center space-x-1"
+                  className="text-blue-600 hover:text-blue-700 text-sm flex items-center space-x-1"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                   <span>Edit</span>
@@ -293,7 +293,7 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={handleSaveNotes}
-                    className="text-green-400 hover:text-green-300 text-sm flex items-center space-x-1"
+                    className="text-emerald-600 hover:text-emerald-700 text-sm flex items-center space-x-1"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>Save</span>
@@ -303,7 +303,7 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
                       setEditingNotes(false);
                       setNotes(broker.notes || "");
                     }}
-                    className="text-gray-400 hover:text-gray-300 text-sm"
+                    className="text-gray-600 hover:text-gray-700 text-sm"
                   >
                     Cancel
                   </button>
@@ -316,10 +316,10 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add notes about this broker..."
                 rows={4}
-                className="w-full px-4 py-3 bg-white/[0.02] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 transition-colors resize-none"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors resize-none"
               />
             ) : (
-              <p className="text-gray-300 whitespace-pre-wrap">
+              <p className="text-gray-700 whitespace-pre-wrap">
                 {broker.notes || "No notes yet"}
               </p>
             )}
@@ -327,12 +327,12 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
         </div>
 
         {/* Tasks Section */}
-        <div className="glass-effect rounded-2xl p-8 border border-white/10">
+        <div className="glass-card rounded-2xl p-8 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Tasks</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Tasks</h2>
             <button
               onClick={() => setShowTaskForm(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-all"
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Add Task</span>
@@ -342,12 +342,12 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
         </div>
 
         {/* Interaction Timeline */}
-        <div className="glass-effect rounded-2xl p-8 border border-white/10">
+        <div className="glass-card rounded-2xl p-8 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Interaction History</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Interaction History</h2>
             <button
               onClick={() => setShowInteractionForm(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-all"
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Log Interaction</span>
@@ -359,28 +359,28 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
               {broker.interactions.map((interaction) => (
                 <div
                   key={interaction.id}
-                  className="bg-white/[0.02] rounded-lg p-4 border border-white/10"
+                  className="bg-white/50 rounded-lg p-4 border border-gray-200"
                 >
                   <div className="flex items-start space-x-3">
                     <div className={`p-2 rounded-lg ${
-                      interaction.interaction_type === "email" ? "bg-blue-500/20 text-blue-400" :
-                      interaction.interaction_type === "call" ? "bg-green-500/20 text-green-400" :
-                      interaction.interaction_type === "meeting" ? "bg-purple-500/20 text-purple-400" :
-                      "bg-gray-500/20 text-gray-400"
+                      interaction.interaction_type === "email" ? "bg-blue-100 text-blue-700" :
+                      interaction.interaction_type === "call" ? "bg-emerald-100 text-emerald-700" :
+                      interaction.interaction_type === "meeting" ? "bg-purple-100 text-purple-700" :
+                      "bg-gray-100 text-gray-700"
                     }`}>
                       {getInteractionIcon(interaction.interaction_type)}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-1">
-                        <h4 className="text-white font-medium">
+                        <h4 className="text-gray-900 font-medium">
                           {interaction.subject || `${interaction.interaction_type.charAt(0).toUpperCase() + interaction.interaction_type.slice(1)} Interaction`}
                         </h4>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-gray-600">
                           {formatDateTime(interaction.interaction_date)}
                         </span>
                       </div>
                       {interaction.notes && (
-                        <p className="text-sm text-gray-300 whitespace-pre-wrap">
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap">
                           {interaction.notes}
                         </p>
                       )}
@@ -391,15 +391,15 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
             </div>
           ) : (
             <div className="text-center py-8">
-              <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400">No interactions logged yet</p>
+              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600">No interactions logged yet</p>
             </div>
           )}
         </div>
 
         {/* Load History */}
-        <div className="glass-effect rounded-2xl p-8 border border-white/10">
-          <h2 className="text-2xl font-bold text-white mb-6">Load History</h2>
+        <div className="glass-card rounded-2xl p-8 border border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Load History</h2>
           
           {broker.loads && broker.loads.length > 0 ? (
             <div className="space-y-3">
@@ -411,22 +411,22 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
                   <div
                     key={index}
                     onClick={() => router.push(`/load/${index}`)}
-                    className="bg-white/[0.02] rounded-lg p-4 border border-white/10 hover:border-orange-500/50 transition-all cursor-pointer"
+                    className="bg-white/50 rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h4 className="text-white font-semibold">{load.load_id}</h4>
+                          <h4 className="text-gray-900 font-semibold">{load.load_id}</h4>
                           {firstPickup?.date && (
-                            <div className="flex items-center space-x-1 text-xs text-gray-400">
+                            <div className="flex items-center space-x-1 text-xs text-gray-600">
                               <Calendar className="w-3 h-3" />
                               <span>{firstPickup.date}</span>
                             </div>
                           )}
                         </div>
                         {firstPickup && lastDelivery && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-300">
-                            <MapPin className="w-4 h-4 text-gray-400" />
+                          <div className="flex items-center space-x-2 text-sm text-gray-700">
+                            <MapPin className="w-4 h-4 text-gray-600" />
                             <span>
                               {firstPickup.city}, {firstPickup.state} → {lastDelivery.city}, {lastDelivery.state}
                             </span>
@@ -434,11 +434,11 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-green-400">
+                        <p className="text-lg font-bold text-emerald-600">
                           {formatCurrency(load.rate_total)}
                         </p>
                         {load.miles && (
-                          <p className="text-xs text-gray-400">{load.miles}</p>
+                          <p className="text-xs text-gray-600">{load.miles}</p>
                         )}
                       </div>
                     </div>
@@ -448,8 +448,8 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
             </div>
           ) : (
             <div className="text-center py-8">
-              <Truck className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400">No loads found</p>
+              <Truck className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600">No loads found</p>
             </div>
           )}
         </div>
@@ -472,7 +472,7 @@ export default function BrokerDetailPage({ params }: { params: { id: string } })
           onSuccess={fetchBroker}
         />
       )}
-    </div>
+    </main>
   );
 }
 
