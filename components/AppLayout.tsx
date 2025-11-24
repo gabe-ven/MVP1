@@ -12,7 +12,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const pathname = usePathname();
   
   // Don't show sidebar/header on public landing page
-  const isPublicLandingPage = pathname === "/" && !pathname.includes("/ai-hub");
+  const isPublicLandingPage = pathname === "/";
   
   if (isPublicLandingPage) {
     return <>{children}</>;

@@ -31,7 +31,7 @@ export default function AssistantPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // DEVELOPMENT MODE
-  const DEV_MODE = true;
+  const DEV_MODE = false;
 
   // Check if voice mode requested
   const voiceMode = searchParams?.get("mode") === "voice";

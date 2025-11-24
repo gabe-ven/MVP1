@@ -155,7 +155,7 @@ export default function ContractsPage() {
   const [draftedBrokerLanes, setDraftedBrokerLanes] = useState<Set<string>>(new Set());
   const [draftEmail, setDraftEmail] = useState("");
 
-  const DEV_MODE = true;
+  const DEV_MODE = false;
 
   // Handle broker-lane selection
   const handleSelectBrokerLane = (bl: BrokerLaneScore) => {

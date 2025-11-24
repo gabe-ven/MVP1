@@ -194,9 +194,14 @@ export async function addLoads(
   }
 
   if (rowsToUpsert.length > 0) {
+    // Deduplicate rows by load_id to avoid "cannot affect row a second time" error
+    const uniqueRows = Array.from(
+      new Map(rowsToUpsert.map(row => [row.load_id, row])).values()
+    );
+    
     const { error } = await supabase
       .from("loads")
-      .upsert(rowsToUpsert, { onConflict: "user_email,load_id" });
+      .upsert(uniqueRows, { onConflict: "user_email,load_id" });
 
     if (error) {
       throw error;

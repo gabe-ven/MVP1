@@ -29,27 +29,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get time range from request body (default to 1 month)
+    const body = await request.json().catch(() => ({ timeRange: "1m" }));
+    const timeRange = body.timeRange || "1m";
+    
+    // Calculate date based on time range
+    const startDate = new Date();
+    switch (timeRange) {
+      case "3m":
+        startDate.setMonth(startDate.getMonth() - 3);
+        break;
+      case "6m":
+        startDate.setMonth(startDate.getMonth() - 6);
+        break;
+      case "12m":
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        break;
+      case "1m":
+      default:
+        startDate.setMonth(startDate.getMonth() - 1);
+        break;
+    }
+    const afterDate = startDate.toISOString().split('T')[0].replace(/-/g, '/');
+    
+    console.log(`📅 Syncing Gmail for time range: ${timeRange} (after ${afterDate})`);
+
     // Set up Gmail API client
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({ access_token: session.accessToken });
     
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
-
-    // Calculate date 30 days ago
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const afterDate = thirtyDaysAgo.toISOString().split('T')[0].replace(/-/g, '/');
     
-    // Search queries for rate confirmations
+    // Broadened search queries for rate confirmations
+    // Cast a wider net to catch various naming conventions
     const queries = [
-      `has:attachment filename:pdf filename:rate filename:confirmation after:${afterDate}`,
-      `has:attachment filename:pdf filename:load filename:confirmation after:${afterDate}`,
-      `has:attachment filename:pdf filename:carrier filename:rate after:${afterDate}`,
-      `has:attachment filename:pdf filename:freight filename:confirmation after:${afterDate}`,
-      `has:attachment filename:pdf filename:rate filename:sheet after:${afterDate}`,
-      `has:attachment filename:pdf filename:load filename:tender after:${afterDate}`,
-      `has:attachment filename:pdf filename:rate after:${afterDate}`,
-      `has:attachment filename:pdf subject:rate subject:confirmation after:${afterDate}`
+      // Filename-based searches (specific to common patterns)
+      `has:attachment filename:pdf (filename:rate OR filename:confirmation OR filename:load OR filename:tender) after:${afterDate}`,
+      `has:attachment filename:pdf (filename:RC OR filename:BOL OR filename:carrier) after:${afterDate}`,
+      
+      // Subject-based searches (catch emails about rate confirmations)
+      `has:attachment filename:pdf (subject:"rate confirmation" OR subject:"load confirmation" OR subject:"carrier confirmation") after:${afterDate}`,
+      `has:attachment filename:pdf (subject:rate OR subject:load OR subject:tender OR subject:dispatch) after:${afterDate}`,
+      
+      // Broker-specific patterns (common broker names)
+      `has:attachment filename:pdf (from:tql.com OR from:chrobinson.com OR from:coyote.com OR from:xpo.com OR from:jbhunt.com) after:${afterDate}`,
+      `has:attachment filename:pdf (from:landstar.com OR from:schneider.com OR from:werner.com OR from:estes-express.com) after:${afterDate}`,
+      
+      // Generic "any PDF with freight-related keywords"
+      `has:attachment filename:pdf (freight OR trucking OR dispatch OR shipment) after:${afterDate}`,
     ];
 
     const allMessages: any[] = [];

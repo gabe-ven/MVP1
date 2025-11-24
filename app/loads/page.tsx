@@ -19,70 +19,6 @@ import {
 } from "lucide-react";
 import { LoadData } from "@/lib/schema";
 
-// Mock data matching dashboard structure
-const MOCK_LOADS: LoadData[] = [
-  {
-    load_id: "LOAD-12345",
-    broker_name: "TQL",
-    broker_email: "dispatch@tql.com",
-    broker_phone: "(513) 123-4567",
-    rate_total: 2500,
-    miles: "850 miles",
-    stops: [
-      { type: "pickup", location_name: "Warehouse A", address: "123 Main St", city: "Los Angeles", state: "CA", zip: "90001", date: "2024-11-20", time: "08:00 AM", appointment_type: "FCFS" },
-      { type: "delivery", location_name: "Distribution Center", address: "456 Oak Ave", city: "Phoenix", state: "AZ", zip: "85001", date: "2024-11-21", time: "02:00 PM", appointment_type: "Appointment" }
-    ]
-  } as any,
-  {
-    load_id: "LOAD-12346",
-    broker_name: "CH Robinson",
-    broker_email: "loads@chrobinson.com",
-    broker_phone: "(952) 987-6543",
-    rate_total: 3200,
-    miles: "1100 miles",
-    stops: [
-      { type: "pickup", location_name: "Factory B", address: "789 Industrial Blvd", city: "Dallas", state: "TX", zip: "75201", date: "2024-11-19", time: "10:00 AM", appointment_type: "FCFS" },
-      { type: "delivery", location_name: "Retail Center", address: "321 Commerce St", city: "Atlanta", state: "GA", zip: "30301", date: "2024-11-20", time: "04:00 PM", appointment_type: "Appointment" }
-    ]
-  } as any,
-  {
-    load_id: "LOAD-12347",
-    broker_name: "Coyote Logistics",
-    broker_email: "ops@coyote.com",
-    broker_phone: "(877) 555-0199",
-    rate_total: 1800,
-    miles: "600 miles",
-    stops: [
-      { type: "pickup", location_name: "Warehouse C", address: "555 Lake Shore Dr", city: "Chicago", state: "IL", zip: "60601", date: "2024-11-22", time: "06:00 AM", appointment_type: "FCFS" },
-      { type: "delivery", location_name: "Distribution D", address: "777 Beale St", city: "Memphis", state: "TN", zip: "38103", date: "2024-11-22", time: "06:00 PM", appointment_type: "Appointment" }
-    ]
-  } as any,
-  {
-    load_id: "LOAD-12348",
-    broker_name: "TQL",
-    broker_email: "dispatch@tql.com",
-    broker_phone: "(513) 123-4567",
-    rate_total: 2800,
-    miles: "920 miles",
-    stops: [
-      { type: "pickup", location_name: "Port Terminal", address: "888 Harbor Way", city: "Seattle", state: "WA", zip: "98101", date: "2024-11-23", time: "09:00 AM", appointment_type: "Appointment" },
-      { type: "delivery", location_name: "Warehouse E", address: "999 River Rd", city: "Portland", state: "OR", zip: "97201", date: "2024-11-23", time: "04:00 PM", appointment_type: "FCFS" }
-    ]
-  } as any,
-  {
-    load_id: "LOAD-12349",
-    broker_name: "Landstar",
-    broker_email: "loads@landstar.com",
-    broker_phone: "(904) 555-0100",
-    rate_total: 4200,
-    miles: "1450 miles",
-    stops: [
-      { type: "pickup", location_name: "Depot F", address: "111 Ocean Dr", city: "Miami", state: "FL", zip: "33101", date: "2024-11-24", time: "07:00 AM", appointment_type: "FCFS" },
-      { type: "delivery", location_name: "Terminal G", address: "222 Broadway", city: "New York", state: "NY", zip: "10001", date: "2024-11-25", time: "06:00 PM", appointment_type: "Appointment" }
-    ]
-  } as any,
-];
-
 // Enhanced load type with additional fields for loads page
 interface EnhancedLoad extends LoadData {
   score: "Good" | "Risky" | "Bad";
@@ -104,9 +40,10 @@ export default function LoadsPage() {
     score: "All",
     broker: "All",
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   // DEVELOPMENT MODE
-  const DEV_MODE = true;
+  const DEV_MODE = false;
 
   // Redirect unauthenticated users
   useEffect(() => {
@@ -115,20 +52,43 @@ export default function LoadsPage() {
     }
   }, [status, router]);
 
-  // Load data on mount
+  // Load REAL data from API
   useEffect(() => {
-    // Enhance mock loads with additional data
-    const enhancedLoads: EnhancedLoad[] = MOCK_LOADS.map((load, idx) => ({
-      ...load,
-      score: ["Good", "Good", "Risky", "Good", "Bad"][idx] as "Good" | "Risky" | "Bad",
-      status: ["Offered", "Accepted", "In Transit", "Offered", "Delivered"][idx] as any,
-      dateDetected: ["2024-11-19", "2024-11-18", "2024-11-21", "2024-11-22", "2024-11-17"][idx],
-      hosFeasible: [true, true, false, true, true][idx],
-      doubleBrokerRisk: [false, false, true, false, false][idx],
-    }));
-    setLoads(enhancedLoads);
-    setFilteredLoads(enhancedLoads);
-  }, []);
+    async function fetchLoads() {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/loads");
+        if (!response.ok) throw new Error("Failed to fetch loads");
+        
+        const data = await response.json();
+        const allLoads = data.loads || [];
+        
+        // Enhance loads with additional metadata for the loads page
+        const enhancedLoads: EnhancedLoad[] = allLoads.map((load: LoadData) => ({
+          ...load,
+          // For now, assign default values - you can enhance this logic later
+          score: "Good" as "Good" | "Risky" | "Bad", // TODO: Calculate based on broker history, RPM, etc.
+          status: "Offered" as any, // TODO: Track actual status
+          dateDetected: load.stops?.find(s => s.type === "pickup")?.date || new Date().toISOString().split('T')[0],
+          hosFeasible: true, // TODO: Calculate based on distance and time windows
+          doubleBrokerRisk: false, // TODO: Check against known double-broker patterns
+        }));
+        
+        setLoads(enhancedLoads);
+        setFilteredLoads(enhancedLoads);
+      } catch (error) {
+        console.error("Error fetching loads:", error);
+        setLoads([]);
+        setFilteredLoads([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    if (status === "authenticated" || DEV_MODE) {
+      fetchLoads();
+    }
+  }, [status, DEV_MODE]);
 
   // Apply filters
   useEffect(() => {
@@ -191,7 +151,7 @@ export default function LoadsPage() {
 
   const uniqueBrokers = ["All", ...Array.from(new Set(loads.map(l => l.broker_name)))];
 
-  if (!DEV_MODE && status === "loading") {
+  if ((!DEV_MODE && status === "loading") || isLoading) {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>

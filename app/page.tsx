@@ -14,10 +14,10 @@ export default function LandingPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Redirect authenticated users to AI Hub
+  // Redirect authenticated users to Dashboard
   useEffect(() => {
     if (status === "authenticated" && session) {
-      router.push("/ai-hub");
+      router.push("/dashboard");
     }
   }, [status, session, router]);
 
